@@ -162,10 +162,12 @@ void Game::GameOver()
 
 void Game::Draw()
 {
+    BeginDrawing();
     ClearBackground(BLACK);
     DrawUI();
     snake.Draw();
     food.Draw();
+    EndDrawing();
 }
 
 void Game::DrawUI()
