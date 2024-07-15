@@ -3,14 +3,18 @@
 #include <deque>
 using std::deque;
 
-#include "raylib.h"
+#include <raylib.h>
+
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 
 extern Color green;
 extern Color darkGreen;
 
-extern int cellSize; 
-extern int cellCount;
-extern int offset;
+extern const int cellSize; 
+extern const int cellCount;
+extern const int offset;
 
 extern bool ElementInDeque(Vector2 element, deque<Vector2> deque);
 

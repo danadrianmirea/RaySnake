@@ -8,16 +8,31 @@ class Game
 {
 public:
     Game();
+    void InitGame();
     ~Game();
     void Reset();
-    void Update();
+
+    void Update(float dt);
+    void HandleInput();
+    void UpdateUI();
+    void Draw();
+    void DrawUI();
+    void DrawScreenSpaceUI();
+
     void CheckCollisionWithFood();
     void CheckCollisionWithEdges();
     void CheckCollisionWithSnake();
     void GameOver();
-    void Draw();
-    void DrawUI();
+    std::string FormatWithLeadingZeroes(int number, int width);
+    
     int GetScore() { return score; }
+
+    bool firstTimeGameStart;
+    bool isFirstFrameAfterReset;
+    bool isInExitMenu;
+    bool paused;
+    bool lostWindowFocus;
+    bool gameOver;
 
 private:
     Snake snake;
@@ -25,12 +40,14 @@ private:
     Sound eatSound;
     Sound wallSound;
 
-    bool running;
-    bool paused;
     int score;
-    bool won;
+    
     float timePassedSinceLastSnakeUpdate;
     float snakeUpdateTime;
     const float snakeUpdateSpeedIncrement = 0.005;
     const int maxPoints = 50;
+
+    float screenScale;
+    RenderTexture2D targetRenderTex;
+    Font font;
 };

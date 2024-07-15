@@ -5,16 +5,29 @@
 
 int main()
 {
-    InitWindow(2 * offset + cellSize * cellCount, 2 * offset + cellSize * cellCount, "Snake");
+    InitWindow(gameScreenWidth, gameScreenHeight, "Snake");
+
+    SetMasterVolume(0.22f);
+    SetExitKey(KEY_NULL); // Disable KEY_ESCAPE to close window, X-button still works
+
+    windowWidth = GetScreenWidth();
+    windowHeight = GetScreenHeight();
+    SetWindowSize(windowWidth, windowHeight);
+
+    SetWindowPosition(50, 50);
     SetTargetFPS(144);
 
     Game game;
+    ToggleBorderlessWindowed();
+    float dt = 0.0f;
 
-    while (WindowShouldClose() == false)
+    while (!exitWindow)
     {
-        game.Update();
+        game.Update(dt);
         game.Draw();
     }
+
+
 
     CloseWindow();
 
