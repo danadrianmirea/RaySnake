@@ -27,6 +27,10 @@ public:
     
     int GetScore() { return score; }
 
+    void CheckForHighScore();
+    void SaveHighScoreToFile();
+    int LoadHighScoreFromFile();
+
     bool firstTimeGameStart;
     bool isFirstFrameAfterReset;
     bool isInExitMenu;
@@ -41,6 +45,7 @@ private:
     Sound wallSound;
 
     int score;
+    int highScore;
     bool won;
     
     float timePassedSinceLastSnakeUpdate;

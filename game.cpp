@@ -2,6 +2,7 @@
 #include "game.h"
 #include "globals.h"
 
+#include <fstream>
 #include <iostream>
 
 Game::Game()
@@ -23,6 +24,7 @@ Game::Game()
 void Game::InitGame()
 {
     score = 0;
+    highScore = LoadHighScoreFromFile();
     isFirstFrameAfterReset = true;
     isInExitMenu = false;
     paused = false;
@@ -199,7 +201,8 @@ void Game::CheckCollisionWithFood()
     {
         food.position = food.GenerateRandomPos(snake.body);
 
-        score ++;
+        score++;
+        CheckForHighScore();
         snake.Grow();
         PlaySound(eatSound);
 
@@ -281,7 +284,21 @@ void Game::DrawUI()
     // DrawText("", offset - 5, offset + cellSize * cellCount + 10, 40, WHITE);
 
     DrawRectangleLinesEx(Rectangle{(float)offset - 5, (float)offset - 5, (float)cellSize * cellCount + 10, (float)cellSize * cellCount + 10}, 5.0f, WHITE);
-    DrawText(TextFormat("%d", score), offset - 5, offset + cellSize * cellCount + 10, 30, WHITE);
+
+    std::string scoreText = FormatWithLeadingZeroes(score, 7);
+    DrawText("Score: ", offset - 5, offset + cellSize * cellCount + 10, 30, WHITE);
+    DrawText(scoreText.c_str(), offset - 5 + 110, offset + cellSize * cellCount + 10, 30, WHITE);
+
+    std::string highScoreText = FormatWithLeadingZeroes(highScore, 7);
+    DrawText("High Score: ", offset - 5 + 400, offset + cellSize * cellCount + 10, 30, WHITE);
+    DrawText(highScoreText.c_str(), offset - 5 + 590, offset + cellSize * cellCount + 10, 30, WHITE);
+
+/*
+    DrawTextEx(font, "HIGH-SCORE", {570, 15}, 34, 2, yellow);
+    std::string highScoreText = FormatWithLeadingZeroes(highScore, 7);
+    DrawTextEx(font, highScoreText.c_str(), {570, 40}, 34, 2, yellow);
+    */
+
     //DrawText(TextFormat("Reach %d points to win", maxPoints), offset - 5 + 250, offset + cellSize * cellCount + 10, 30, WHITE);
 
     /*
@@ -317,6 +334,46 @@ std::string Game::FormatWithLeadingZeroes(int number, int width)
     numberText = std::string(leadingZeros, '0') + numberText;
     return numberText;
 }
+
+void Game::CheckForHighScore()
+{
+    if (score > highScore)
+    {
+        highScore = score;
+        SaveHighScoreToFile();
+    }
+}
+
+void Game::SaveHighScoreToFile()
+{
+    std::ofstream highScoreFile("highscore.txt");
+    if (highScoreFile.is_open())
+    {
+        highScoreFile << highScore;
+        highScoreFile.close();
+    }
+    else
+    {
+        std::cerr << "Failed to save highscore to file \n";
+    }
+}
+
+int Game::LoadHighScoreFromFile()
+{
+    int loadedHighScore = 0;
+    std::ifstream highscoreFile("highscore.txt");
+    if (highscoreFile.is_open())
+    {
+        highscoreFile >> loadedHighScore;
+        highscoreFile.close();
+    }
+    else
+    {
+        std::cerr << "Failed to load highscore from file\n";
+    }
+    return loadedHighScore;
+}
+
 
 void Game::DrawScreenSpaceUI()
 {
