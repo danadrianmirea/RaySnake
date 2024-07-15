@@ -199,7 +199,7 @@ void Game::CheckCollisionWithFood()
     {
         food.position = food.GenerateRandomPos(snake.body);
 
-        score += 2;
+        score ++;
         snake.Grow();
         PlaySound(eatSound);
 
