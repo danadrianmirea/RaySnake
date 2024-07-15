@@ -6,7 +6,6 @@
 int main()
 {
     InitWindow(gameScreenWidth, gameScreenHeight, "Snake");
-
     SetMasterVolume(0.22f);
     SetExitKey(KEY_NULL);
     SetWindowPosition(50, 50);
