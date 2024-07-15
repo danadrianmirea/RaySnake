@@ -46,7 +46,8 @@ private:
     float timePassedSinceLastSnakeUpdate;
     float snakeUpdateTime;
     const float snakeUpdateSpeedIncrement = 0.005;
-    const int maxPoints = 50;
+    //const int maxPoints = 50;
+    const float snakeUpdateTimeLimit = 0.09f;
 
     float screenScale;
     RenderTexture2D targetRenderTex;
