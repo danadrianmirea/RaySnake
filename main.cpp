@@ -9,11 +9,6 @@ int main()
 
     SetMasterVolume(0.22f);
     SetExitKey(KEY_NULL);
-
-    windowWidth = GetScreenWidth();
-    windowHeight = GetScreenHeight();
-    SetWindowSize(windowWidth, windowHeight);
-
     SetWindowPosition(50, 50);
     SetTargetFPS(144);
 
