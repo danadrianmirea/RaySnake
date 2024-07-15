@@ -8,7 +8,7 @@ int main()
     InitWindow(gameScreenWidth, gameScreenHeight, "Snake");
 
     SetMasterVolume(0.22f);
-    SetExitKey(KEY_NULL); // Disable KEY_ESCAPE to close window, X-button still works
+    SetExitKey(KEY_NULL);
 
     windowWidth = GetScreenWidth();
     windowHeight = GetScreenHeight();
@@ -27,9 +27,6 @@ int main()
         game.Draw();
     }
 
-
-
     CloseWindow();
-
     return 0;
 }
