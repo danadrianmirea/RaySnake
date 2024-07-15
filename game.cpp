@@ -2,6 +2,8 @@
 #include "game.h"
 #include "globals.h"
 
+#include <iostream>
+
 Game::Game()
 {
     firstTimeGameStart = true;
@@ -10,8 +12,6 @@ Game::Game()
     SetTextureFilter(targetRenderTex.texture, TEXTURE_FILTER_BILINEAR); // Texture scale filter to use
 
     font = LoadFontEx("Font/monogram.ttf", 64, 0, 0);
-
-    InitGame();
 
     InitAudioDevice();
     eatSound = LoadSound("Sounds/eat.mp3");
@@ -28,6 +28,7 @@ void Game::InitGame()
     paused = false;
     lostWindowFocus = false;
     gameOver = false;
+    won = false;
 
     screenScale = MIN((float)GetScreenWidth() / gameScreenWidth, (float)GetScreenHeight() / gameScreenHeight);
 
@@ -53,17 +54,12 @@ void Game::Reset()
 
 void Game::Update(float dt)
 {
-
-    // check if game is won
-    // if ((int)snake.body.size() > cellCount * cellCount - 1)
-    // if (score >= maxPoints)
-    //{
-    //  won = true;
-    // GameOver();
-    // return;
-    // }
-
-    // snake update logic
+    if ((int)snake.body.size() > cellCount * cellCount - 1)
+    {
+        won = true;
+        GameOver();
+        return;
+    }
 
     screenScale = MIN((float)GetScreenWidth() / gameScreenWidth, (float)GetScreenHeight() / gameScreenHeight);
     UpdateUI();
@@ -77,11 +73,12 @@ void Game::Update(float dt)
         if (timePassedSinceLastSnakeUpdate >= snakeUpdateTime)
         {
             timePassedSinceLastSnakeUpdate = 0.0f;
-            CheckCollisionWithFood();
-            CheckCollisionWithEdges();
-            CheckCollisionWithSnake();
             snake.Update();
         }
+
+        CheckCollisionWithFood();
+        CheckCollisionWithEdges();
+        CheckCollisionWithSnake();
     }
 }
 
@@ -141,7 +138,7 @@ void Game::UpdateUI()
         lostWindowFocus = false;
     }
 
-    if (exitWindowRequested == false && lostWindowFocus == false && gameOver == false && IsKeyPressed(KEY_P))
+    if (exitWindowRequested == false && lostWindowFocus == false && gameOver == false && isFirstFrameAfterReset == false && IsKeyPressed(KEY_P))
     {
         if (paused)
         {
@@ -198,7 +195,6 @@ void Game::HandleInput()
 
 void Game::CheckCollisionWithFood()
 {
-
     if (Vector2Equals(snake.body[0], food.position))
     {
         food.position = food.GenerateRandomPos(snake.body);
@@ -207,6 +203,7 @@ void Game::CheckCollisionWithFood()
         snake.Grow();
         PlaySound(eatSound);
         snakeUpdateTime -= snakeUpdateSpeedIncrement; // make snake move faster everytime it eats something
+        //std::cout << "snakeUpdateTime";
     }
 }
 
@@ -236,6 +233,9 @@ void Game::CheckCollisionWithSnake()
 
 void Game::GameOver()
 {
+    gameOver = true;
+    PlaySound(wallSound);
+
     /*
     running = false;
     if (!won)
@@ -250,7 +250,6 @@ void Game::Draw()
     // render everything to a texture
     BeginTextureMode(targetRenderTex);
     ClearBackground(BLACK);
-
 
     snake.Draw();
     food.Draw();
@@ -271,9 +270,12 @@ void Game::Draw()
 
 void Game::DrawUI()
 {
+    DrawText("Snake. WASD to play, ESC to exit, P to pause", offset, 0, 30, WHITE);
+    // DrawText("", offset - 5, offset + cellSize * cellCount + 10, 40, WHITE);
+
     DrawRectangleLinesEx(Rectangle{(float)offset - 5, (float)offset - 5, (float)cellSize * cellCount + 10, (float)cellSize * cellCount + 10}, 5.0f, WHITE);
-    DrawText(TextFormat("%d", score), offset - 5, offset + cellSize * cellCount + 10, 40, WHITE);
-    DrawText(TextFormat("Reach %d points to win", maxPoints), offset - 5 + 250, offset + cellSize * cellCount + 10, 40, WHITE);
+    DrawText(TextFormat("%d", score), offset - 5, offset + cellSize * cellCount + 10, 30, WHITE);
+    DrawText(TextFormat("Reach %d points to win", maxPoints), offset - 5 + 250, offset + cellSize * cellCount + 10, 30, WHITE);
 
     /*
         if (running == false && paused == false)
@@ -313,27 +315,27 @@ void Game::DrawScreenSpaceUI()
 {
     if (exitWindowRequested)
     {
-        //DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, BLACK);
-        DrawText("Are you sure you want to exit? [Y/N]", GetScreenWidth() / 2 - 400, GetScreenHeight() / 2, 40, yellow);
+        // DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, BLACK);
+        DrawText("Are you sure you want to exit? [Y/N]", GetScreenWidth() / 2 - 400, GetScreenHeight() / 2, 40, WHITE);
     }
     else if (firstTimeGameStart)
     {
-        //DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, BLACK);
-        DrawText("Press SPACE to play", GetScreenWidth() / 2 - 200, GetScreenHeight() / 2, 40, yellow);
+        // DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, BLACK);
+        DrawText("Press SPACE to play", GetScreenWidth() / 2 - 200, GetScreenHeight() / 2, 40, WHITE);
     }
     else if (paused)
     {
-        //DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, BLACK);
-        DrawText("Game paused, press P to continue", GetScreenWidth() / 2 - 400, GetScreenHeight() / 2, 40, yellow);
+        // DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, BLACK);
+        DrawText("Game paused, press P to continue", GetScreenWidth() / 2 - 400, GetScreenHeight() / 2, 40, WHITE);
     }
     else if (lostWindowFocus)
     {
-        //DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, BLACK);
-        DrawText("Game paused, focus window to continue", GetScreenWidth() / 2 - 400, GetScreenHeight() / 2, 40, yellow);
+        // DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, BLACK);
+        DrawText("Game paused, focus window to continue", GetScreenWidth() / 2 - 400, GetScreenHeight() / 2, 40, WHITE);
     }
     else if (gameOver)
     {
-        //DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, BLACK);
-        DrawText("Game over, press SPACE to play again", GetScreenWidth() / 2 - 400, GetScreenHeight() / 2, 40, yellow);
+        // DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, BLACK);
+        DrawText("Game over, press SPACE to play again", GetScreenWidth() / 2 - 400, GetScreenHeight() / 2, 40, WHITE);
     }
 }

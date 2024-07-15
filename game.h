@@ -41,6 +41,7 @@ private:
     Sound wallSound;
 
     int score;
+    bool won;
     
     float timePassedSinceLastSnakeUpdate;
     float snakeUpdateTime;
