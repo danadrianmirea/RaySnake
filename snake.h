@@ -22,7 +22,6 @@ public:
 
     // deque<Vector2> body = {Vector2{0, 0}};
     deque<Vector2> body;
-    Vector2 lastDirection;
     Vector2 direction;
     bool isGrowing;
 };

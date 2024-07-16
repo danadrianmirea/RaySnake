@@ -5,7 +5,6 @@ Snake::Snake()
 {
     body = {Vector2{6, 9}, Vector2{5, 9}, Vector2{4, 9}};
     direction = {1, 0};
-    lastDirection = direction;
     isGrowing = false;
 }
 
@@ -31,7 +30,6 @@ void Snake::Reset()
     body.clear();
     body = {Vector2{6, 9}, Vector2{5, 9}, Vector2{4, 9}};
     direction = {1, 0};
-    lastDirection = direction;
 }
 
 void Snake::Update()

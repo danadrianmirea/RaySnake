@@ -70,7 +70,6 @@ void Game::Update(float dt)
     if (running)
     {
         HandleInput();
-
         timePassedSinceLastSnakeUpdate += GetFrameTime();
         if (timePassedSinceLastSnakeUpdate >= snakeUpdateTime)
         {
@@ -152,8 +151,6 @@ void Game::UpdateUI()
             paused = true;
         }
     }
-
-    
 }
 
 void Game::HandleInput()
@@ -168,7 +165,6 @@ void Game::HandleInput()
     {
         if (!Vector2Equals(snake.direction, Vector2{0, 1}))
         {
-            snake.lastDirection = snake.direction;
             snake.direction = {0, -1};
         }
     }
@@ -176,7 +172,6 @@ void Game::HandleInput()
     {
         if (!Vector2Equals(snake.direction, Vector2{0, -1}))
         {
-            snake.lastDirection = snake.direction;
             snake.direction = {0, 1};
         }
     }
@@ -184,7 +179,6 @@ void Game::HandleInput()
     {
         if (!Vector2Equals(snake.direction, Vector2{1, 0}))
         {
-            snake.lastDirection = snake.direction;
             snake.direction = {-1, 0};
         }
     }
@@ -192,7 +186,6 @@ void Game::HandleInput()
     {
         if (!Vector2Equals(snake.direction, Vector2{-1, 0}))
         {
-            snake.lastDirection = snake.direction;
             snake.direction = {1, 0};
         }
     }
@@ -209,14 +202,14 @@ void Game::CheckCollisionWithFood()
         snake.Grow();
         PlaySound(eatSound);
 
-        if(score % 10 == 0)
+        if (score % 10 == 0)
         {
-            if(snakeUpdateTime > snakeUpdateTimeLimit)
+            if (snakeUpdateTime > snakeUpdateTimeLimit)
             {
                 snakeUpdateTime -= snakeUpdateSpeedIncrement; // make snake move faster when it eats something
             }
         }
-        //std::cout << "snakeUpdateTime: " << snakeUpdateTime << "\n";
+        // std::cout << "snakeUpdateTime: " << snakeUpdateTime << "\n";
     }
 }
 
@@ -239,11 +232,7 @@ void Game::CheckCollisionWithSnake()
     {
         if (Vector2Equals(snake.body[i], snake.body[0]))
         {
-            //if (!Vector2Equals(Vector2Add(snake.direction, snake.lastDirection), Vector2Zero())) // fix bug when spamming inputs
-            if(i!=1)
-            {
-                GameOver();
-            }
+            GameOver();
         }
     }
 }
@@ -300,13 +289,13 @@ void Game::DrawUI()
     DrawText("High Score: ", offset - 5 + 400, offset + cellSize * cellCount + 10, 30, WHITE);
     DrawText(highScoreText.c_str(), offset - 5 + 590, offset + cellSize * cellCount + 10, 30, WHITE);
 
-/*
-    DrawTextEx(font, "HIGH-SCORE", {570, 15}, 34, 2, yellow);
-    std::string highScoreText = FormatWithLeadingZeroes(highScore, 7);
-    DrawTextEx(font, highScoreText.c_str(), {570, 40}, 34, 2, yellow);
-    */
+    /*
+        DrawTextEx(font, "HIGH-SCORE", {570, 15}, 34, 2, yellow);
+        std::string highScoreText = FormatWithLeadingZeroes(highScore, 7);
+        DrawTextEx(font, highScoreText.c_str(), {570, 40}, 34, 2, yellow);
+        */
 
-    //DrawText(TextFormat("Reach %d points to win", maxPoints), offset - 5 + 250, offset + cellSize * cellCount + 10, 30, WHITE);
+    // DrawText(TextFormat("Reach %d points to win", maxPoints), offset - 5 + 250, offset + cellSize * cellCount + 10, 30, WHITE);
 
     /*
         if (running == false && paused == false)
@@ -380,7 +369,6 @@ int Game::LoadHighScoreFromFile()
     }
     return loadedHighScore;
 }
-
 
 void Game::DrawScreenSpaceUI()
 {
