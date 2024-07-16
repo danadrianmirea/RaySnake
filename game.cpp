@@ -93,6 +93,23 @@ void Game::UpdateUI()
         return;
     }
 
+#ifdef AM_RAY_DEBUG
+    if (IsKeyPressed(KEY_ENTER) && (IsKeyDown(KEY_LEFT_ALT) || IsKeyDown(KEY_RIGHT_ALT)))
+    {
+        if (fullscreen)
+        {
+            fullscreen = false;
+            ToggleBorderlessWindowed();
+            SetWindowPosition(minimizeOffset, minimizeOffset);
+        }
+        else
+        {
+            fullscreen = true;
+            ToggleBorderlessWindowed();
+        }
+    }
+#endif
+
     if (firstTimeGameStart && IsKeyPressed(KEY_SPACE))
     {
         firstTimeGameStart = false;
@@ -135,11 +152,12 @@ void Game::UpdateUI()
             paused = true;
         }
     }
+
+    
 }
 
 void Game::HandleInput()
 {
-
     if (isFirstFrameAfterReset)
     {
         isFirstFrameAfterReset = false;
@@ -150,30 +168,31 @@ void Game::HandleInput()
     {
         if (!Vector2Equals(snake.direction, Vector2{0, 1}))
         {
+            snake.lastDirection = snake.direction;
             snake.direction = {0, -1};
         }
     }
-
-    if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S))
+    else if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S))
     {
         if (!Vector2Equals(snake.direction, Vector2{0, -1}))
         {
+            snake.lastDirection = snake.direction;
             snake.direction = {0, 1};
         }
     }
-
-    if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A))
+    else if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A))
     {
         if (!Vector2Equals(snake.direction, Vector2{1, 0}))
         {
+            snake.lastDirection = snake.direction;
             snake.direction = {-1, 0};
         }
     }
-
-    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D))
+    else if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D))
     {
         if (!Vector2Equals(snake.direction, Vector2{-1, 0}))
         {
+            snake.lastDirection = snake.direction;
             snake.direction = {1, 0};
         }
     }
@@ -220,7 +239,11 @@ void Game::CheckCollisionWithSnake()
     {
         if (Vector2Equals(snake.body[i], snake.body[0]))
         {
-            GameOver();
+            //if (!Vector2Equals(Vector2Add(snake.direction, snake.lastDirection), Vector2Zero())) // fix bug when spamming inputs
+            if(i!=1)
+            {
+                GameOver();
+            }
         }
     }
 }

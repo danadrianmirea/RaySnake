@@ -8,6 +8,7 @@ using std::deque;
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+//#define AM_RAY_DEBUG
 
 extern Color green;
 extern Color darkGreen;
@@ -27,5 +28,6 @@ extern const int gameScreenHeight;
 extern bool exitWindow;
 extern bool exitWindowRequested;
 extern bool fullscreen;
+extern const int minimizeOffset;
 extern float borderOffsetWidth;
 extern float borderOffsetHeight;
