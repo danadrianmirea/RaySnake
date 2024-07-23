@@ -57,4 +57,6 @@ private:
     float screenScale;
     RenderTexture2D targetRenderTex;
     Font font;
+
+    bool inputProcessed;
 };

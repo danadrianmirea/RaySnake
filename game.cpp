@@ -38,6 +38,7 @@ void Game::InitGame()
     snakeUpdateTime = 0.15f;
     snake.Reset();
     food.position = food.GenerateRandomPos(snake.body);
+    inputProcessed = false;
 }
 
 Game::~Game()
@@ -75,6 +76,7 @@ void Game::Update(float dt)
         {
             timePassedSinceLastSnakeUpdate = 0.0f;
             snake.Update();
+            inputProcessed = false;
         }
 
         CheckCollisionWithFood();
@@ -161,12 +163,18 @@ void Game::HandleInput()
         return;
     }
 
+    if(inputProcessed)
+    {
+        return;
+    }
+
     if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W))
     {
         if (!Vector2Equals(snake.direction, Vector2{0, 1}))
         {
             snake.direction = {0, -1};
         }
+        inputProcessed = true;
     }
     else if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S))
     {
@@ -174,6 +182,7 @@ void Game::HandleInput()
         {
             snake.direction = {0, 1};
         }
+        inputProcessed = true;
     }
     else if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A))
     {
@@ -181,6 +190,7 @@ void Game::HandleInput()
         {
             snake.direction = {-1, 0};
         }
+        inputProcessed = true;
     }
     else if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D))
     {
@@ -188,6 +198,7 @@ void Game::HandleInput()
         {
             snake.direction = {1, 0};
         }
+        inputProcessed = true;
     }
 }
 
