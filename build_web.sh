@@ -8,22 +8,15 @@ emcc src/*.cpp -o web-build/index.html \
   -s USE_GLFW=3 \
   -s ASYNCIFY \
   -s TOTAL_MEMORY=16777216 \
+  -s STACK_SIZE=262144 \
   -s FORCE_FILESYSTEM=1 \
   -s EXPORTED_FUNCTIONS="['_main']" \
   -s EXPORTED_RUNTIME_METHODS="['ccall', 'cwrap']" \
   -s ALLOW_MEMORY_GROWTH=1 \
-  -s ENVIRONMENT=web \
-  -s MODULARIZE=1 \
-  -s EXPORT_NAME="RaySnake" \
-  -s EXPORT_ES6=1 \
-  -s USE_ES6_IMPORT_META=0 \
-  -s SINGLE_FILE=1 \
-  -s WASM=1 \
-  -O3 \
-  --preload-file Font@/Font \
-  --preload-file Graphics/food.png@/Graphics/food.png \
-  --preload-file Sounds@/Sounds \
-  --shell-file custom_shell.html
+  --preload-file assets/Graphics/food.png@/assets/Graphics/food.png \
+  --preload-file assets/Font@/assets/Font \
+  --preload-file assets/Sounds@/assets/Sounds \
+  --shell-file minshell.html
 
 # Check if the emcc build was successful
 if [ $? -eq 0 ]; then

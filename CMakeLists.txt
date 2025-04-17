@@ -57,12 +57,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 # Copy assets to output directory
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/Graphics"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/Graphics
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/Sounds"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/Sounds
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/Font"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/Font
+        "${CMAKE_SOURCE_DIR}/assets"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
 ) 

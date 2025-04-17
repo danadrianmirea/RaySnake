@@ -6,6 +6,8 @@
 #ifdef EMSCRIPTEN_BUILD
 #include <emscripten.h>
 
+#include "globals.h"
+
 Game* game = nullptr;
 
 void mainLoop() {

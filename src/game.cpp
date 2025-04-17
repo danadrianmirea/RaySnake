@@ -1,6 +1,7 @@
 #include <string>
 #include "game.h"
 #include "globals.h"
+#include "screen_utils.h"
 
 #include <fstream>
 #include <iostream>
@@ -8,16 +9,12 @@
 Game::Game()
 {
     firstTimeGameStart = true;
-
     targetRenderTex = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
     SetTextureFilter(targetRenderTex.texture, TEXTURE_FILTER_BILINEAR); // Texture scale filter to use
-
-    font = LoadFontEx("Font/monogram.ttf", 64, 0, 0);
-
+    font = LoadFontEx("assets/Font/monogram.ttf", 64, 0, 0);
     InitAudioDevice();
-    eatSound = LoadSound("Sounds/eat.mp3");
-    wallSound = LoadSound("Sounds/wall.mp3");
-
+    eatSound = LoadSound("assets/Sounds/eat.mp3");
+    wallSound = LoadSound("assets/Sounds/wall.mp3");
     InitGame();
 }
 
@@ -31,9 +28,7 @@ void Game::InitGame()
     lostWindowFocus = false;
     gameOver = false;
     won = false;
-
     screenScale = MIN((float)GetScreenWidth() / gameScreenWidth, (float)GetScreenHeight() / gameScreenHeight);
-
     timePassedSinceLastSnakeUpdate = 0.0f;
     snakeUpdateTime = 0.15f;
     snake.Reset();
@@ -63,8 +58,12 @@ void Game::Update(float dt)
         GameOver();
         return;
     }
-
+#ifdef EMSCRIPTEN_BUILD
+    screenScale = MIN((float)GetScreenWidthWrapper() / gameScreenWidth * WEB_SCREEN_SCALE, (float)GetScreenHeightWrapper() / gameScreenHeight * WEB_SCREEN_SCALE);
+#else
     screenScale = MIN((float)GetScreenWidth() / gameScreenWidth, (float)GetScreenHeight() / gameScreenHeight);
+#endif
+
     UpdateUI();
 
     bool running = (firstTimeGameStart == false && paused == false && lostWindowFocus == false && isInExitMenu == false && gameOver == false);
@@ -87,12 +86,27 @@ void Game::Update(float dt)
 
 void Game::UpdateUI()
 {
+#ifdef EMSCRIPTEN_BUILD
+    if (IsKeyPressed(KEY_ESCAPE))
+    {
+        if (paused)
+        {
+            paused = false;
+        }
+        else
+        {
+            paused = true;
+        }
+        return;
+    }
+#else
     if (WindowShouldClose() || (IsKeyPressed(KEY_ESCAPE) && exitWindowRequested == false))
     {
         exitWindowRequested = true;
         isInExitMenu = true;
         return;
     }
+#endif
 
 #ifdef AM_RAY_DEBUG
     if (IsKeyPressed(KEY_ENTER) && (IsKeyDown(KEY_LEFT_ALT) || IsKeyDown(KEY_RIGHT_ALT)))
@@ -115,11 +129,11 @@ void Game::UpdateUI()
     }
 #endif
 
-    if (firstTimeGameStart && IsKeyPressed(KEY_SPACE))
+    if (firstTimeGameStart && IsKeyPressed(KEY_ENTER))
     {
         firstTimeGameStart = false;
     }
-    else if (gameOver && IsKeyPressed(KEY_SPACE))
+    else if (gameOver && IsKeyPressed(KEY_ENTER))
     {
         Reset();
     }
@@ -256,14 +270,6 @@ void Game::GameOver()
 {
     gameOver = true;
     PlaySound(wallSound);
-
-    /*
-    running = false;
-    if (!won)
-    {
-        PlaySound(wallSound);
-    }
-    */
 }
 
 void Game::Draw()
@@ -282,7 +288,7 @@ void Game::Draw()
     BeginDrawing();
     ClearBackground(BLACK);
     DrawTexturePro(targetRenderTex.texture, (Rectangle){0.0f, 0.0f, (float)targetRenderTex.texture.width, (float)-targetRenderTex.texture.height},
-                   (Rectangle){(GetScreenWidth() - ((float)gameScreenWidth * screenScale)) * 0.5f, (GetScreenHeight() - ((float)gameScreenHeight * screenScale)) * 0.5f, (float)gameScreenWidth * screenScale, (float)gameScreenHeight * screenScale},
+                   (Rectangle){(GetScreenWidthWrapper() - ((float)gameScreenWidth * screenScale)) * 0.5f, (GetScreenHeightWrapper() - ((float)gameScreenHeight * screenScale)) * 0.5f, (float)gameScreenWidth * screenScale, (float)gameScreenHeight * screenScale},
                    (Vector2){0, 0}, 0.0f, WHITE);
 
     DrawScreenSpaceUI();
@@ -303,39 +309,6 @@ void Game::DrawUI()
     std::string highScoreText = FormatWithLeadingZeroes(highScore, 7);
     DrawText("High Score: ", offset - 5 + 400, offset + cellSize * cellCount + 10, 30, WHITE);
     DrawText(highScoreText.c_str(), offset - 5 + 590, offset + cellSize * cellCount + 10, 30, WHITE);
-
-    /*
-        DrawTextEx(font, "HIGH-SCORE", {570, 15}, 34, 2, yellow);
-        std::string highScoreText = FormatWithLeadingZeroes(highScore, 7);
-        DrawTextEx(font, highScoreText.c_str(), {570, 40}, 34, 2, yellow);
-        */
-
-    // DrawText(TextFormat("Reach %d points to win", maxPoints), offset - 5 + 250, offset + cellSize * cellCount + 10, 30, WHITE);
-
-    /*
-        if (running == false && paused == false)
-        {
-            if (won)
-            {
-                DrawText("You win! Press SPACE to play again", 80, 10, 40, WHITE);
-            }
-            else
-            {
-                DrawText("Game over, press SPACE to play again", 80, 10, 40, WHITE);
-            }
-        }
-        else
-        {
-            if (paused)
-            {
-                DrawText("Paused. Press SPACE to continue", 80, 10, 40, WHITE);
-            }
-            else
-            {
-                DrawText("Press SPACE to pause", 200, 10, 40, WHITE);
-            }
-        }
-        */
 }
 
 std::string Game::FormatWithLeadingZeroes(int number, int width)
@@ -357,12 +330,7 @@ void Game::CheckForHighScore()
 
 void Game::SaveHighScoreToFile()
 {
-    #ifdef EMSCRIPTEN_BUILD
-    // Use browser's localStorage for web builds
-    EM_ASM_({
-        Module['localStorage'].setItem("snake_highscore", $0);
-    }, highScore);
-    #else
+#ifndef EMSCRIPTEN_BUILD
     std::ofstream highScoreFile("highscore.txt");
     if (highScoreFile.is_open())
     {
@@ -373,19 +341,14 @@ void Game::SaveHighScoreToFile()
     {
         std::cerr << "Failed to save highscore to file \n";
     }
-    #endif
+#endif
 }
 
 int Game::LoadHighScoreFromFile()
 {
     int loadedHighScore = 0;
-    #ifdef EMSCRIPTEN_BUILD
-    // Use browser's localStorage for web builds
-    loadedHighScore = EM_ASM_INT({
-        var score = Module['localStorage'].getItem("snake_highscore");
-        return score ? parseInt(score) : 0;
-    });
-    #else
+#ifndef EMSCRIPTEN_BUILD
+
     std::ifstream highscoreFile("highscore.txt");
     if (highscoreFile.is_open())
     {
@@ -396,7 +359,7 @@ int Game::LoadHighScoreFromFile()
     {
         std::cerr << "Failed to load highscore from file\n";
     }
-    #endif
+#endif
     return loadedHighScore;
 }
 
@@ -404,27 +367,31 @@ void Game::DrawScreenSpaceUI()
 {
     if (exitWindowRequested)
     {
-        DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
-        DrawText("Are you sure you want to exit? [Y/N]", GetScreenWidth() / 2 - 400, GetScreenHeight() / 2, 40, WHITE);
+        DrawRectangleRounded({(float)(GetScreenWidthWrapper() / 2 - 500), (float)(GetScreenHeightWrapper() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
+        DrawText("Are you sure you want to exit? [Y/N]", GetScreenWidthWrapper() / 2 - 400, GetScreenHeightWrapper() / 2, 40, WHITE);
     }
     else if (firstTimeGameStart)
     {
-        DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
-        DrawText("Press SPACE to play", GetScreenWidth() / 2 - 200, GetScreenHeight() / 2, 40, WHITE);
+        DrawRectangleRounded({(float)(GetScreenWidthWrapper() / 2 - 500), (float)(GetScreenHeightWrapper() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
+        DrawText("Press ENTER to play", GetScreenWidthWrapper() / 2 - 200, GetScreenHeightWrapper() / 2, 40, WHITE);
     }
     else if (paused)
     {
-        DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
-        DrawText("Game paused, press P to continue", GetScreenWidth() / 2 - 400, GetScreenHeight() / 2, 40, WHITE);
+        DrawRectangleRounded({(float)(GetScreenWidthWrapper() / 2 - 500), (float)(GetScreenHeightWrapper() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
+#ifdef EMSCRIPTEN_BUILD
+        DrawText("Game paused, press P or ESC to continue", GetScreenWidthWrapper() / 2 - 400, GetScreenHeightWrapper() / 2, 40, WHITE);
+#else
+        DrawText("Game paused, press P to continue", GetScreenWidthWrapper() / 2 - 400, GetScreenHeightWrapper() / 2, 40, WHITE);
+#endif
     }
     else if (lostWindowFocus)
     {
-        DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
-        DrawText("Game paused, focus window to continue", GetScreenWidth() / 2 - 400, GetScreenHeight() / 2, 40, WHITE);
+        DrawRectangleRounded({(float)(GetScreenWidthWrapper() / 2 - 500), (float)(GetScreenHeightWrapper() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
+        DrawText("Game paused, focus window to continue", GetScreenWidthWrapper() / 2 - 400, GetScreenHeightWrapper() / 2, 40, WHITE);
     }
     else if (gameOver)
     {
-        DrawRectangleRounded({(float)(GetScreenWidth() / 2 - 500), (float)(GetScreenHeight() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
-        DrawText("Game over, press SPACE to play again", GetScreenWidth() / 2 - 400, GetScreenHeight() / 2, 40, WHITE);
+        DrawRectangleRounded({(float)(GetScreenWidthWrapper() / 2 - 500), (float)(GetScreenHeightWrapper() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
+        DrawText("Game over, press ENTER to play again", GetScreenWidthWrapper() / 2 - 400, GetScreenHeightWrapper() / 2, 40, WHITE);
     }
 }

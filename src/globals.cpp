@@ -18,7 +18,11 @@ const int gameScreenHeight = 2 * offset + cellSize * cellCount;
 
 bool exitWindowRequested = false;
 bool exitWindow = false;
+#ifdef EMSCRIPTEN_BUILD
+bool fullscreen = false;
+#else
 bool fullscreen = true;
+#endif
 const int minimizeOffset = 50;
 float borderOffsetWidth = 20.0;
 float borderOffsetHeight = 50.0f;

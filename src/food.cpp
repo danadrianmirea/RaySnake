@@ -3,7 +3,7 @@
 
 Food::Food(deque<Vector2> snakeBody)
 {
-    Image image = LoadImage("Graphics/food.png");
+    Image image = LoadImage("assets/Graphics/food.png");
     texture = LoadTextureFromImage(image);
     UnloadImage(image);
     position = GenerateRandomPos(snakeBody);

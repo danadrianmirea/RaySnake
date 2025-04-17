@@ -8,6 +8,10 @@ using std::deque;
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+#define WEB_SCREEN_WIDTH 960
+#define WEB_SCREEN_HEIGHT 540
+#define WEB_SCREEN_SCALE 0.9f
+
 //#define AM_RAY_DEBUG
 
 extern Color green;
