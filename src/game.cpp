@@ -11,10 +11,10 @@ Game::Game()
     firstTimeGameStart = true;
     targetRenderTex = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
     SetTextureFilter(targetRenderTex.texture, TEXTURE_FILTER_BILINEAR); // Texture scale filter to use
-    font = LoadFontEx("assets/Font/monogram.ttf", 64, 0, 0);
+    font = LoadFontEx("Font/monogram.ttf", 64, 0, 0);
     InitAudioDevice();
-    eatSound = LoadSound("assets/Sounds/eat.mp3");
-    wallSound = LoadSound("assets/Sounds/wall.mp3");
+    eatSound = LoadSound("Sounds/eat.mp3");
+    wallSound = LoadSound("Sounds/wall.mp3");
     InitGame();
 }
 

@@ -13,9 +13,9 @@ emcc src/*.cpp -o web-build/index.html \
   -s EXPORTED_FUNCTIONS="['_main']" \
   -s EXPORTED_RUNTIME_METHODS="['ccall', 'cwrap']" \
   -s ALLOW_MEMORY_GROWTH=1 \
-  --preload-file assets/Graphics/food.png@/assets/Graphics/food.png \
-  --preload-file assets/Font@/assets/Font \
-  --preload-file assets/Sounds@/assets/Sounds \
+  --preload-file Graphics/food.png@/Graphics/food.png \
+  --preload-file Font@/Font \
+  --preload-file Sounds@/Sounds \
   --shell-file minshell.html
 
 # Check if the emcc build was successful
