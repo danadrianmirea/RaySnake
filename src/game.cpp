@@ -100,13 +100,17 @@ void Game::UpdateUI()
         if (fullscreen)
         {
             fullscreen = false;
+            #ifndef EMSCRIPTEN_BUILD
             ToggleBorderlessWindowed();
             SetWindowPosition(minimizeOffset, minimizeOffset);
+            #endif
         }
         else
         {
             fullscreen = true;
+            #ifndef EMSCRIPTEN_BUILD
             ToggleBorderlessWindowed();
+            #endif
         }
     }
 #endif
@@ -353,6 +357,12 @@ void Game::CheckForHighScore()
 
 void Game::SaveHighScoreToFile()
 {
+    #ifdef EMSCRIPTEN_BUILD
+    // Use browser's localStorage for web builds
+    EM_ASM_({
+        Module['localStorage'].setItem("snake_highscore", $0);
+    }, highScore);
+    #else
     std::ofstream highScoreFile("highscore.txt");
     if (highScoreFile.is_open())
     {
@@ -363,11 +373,19 @@ void Game::SaveHighScoreToFile()
     {
         std::cerr << "Failed to save highscore to file \n";
     }
+    #endif
 }
 
 int Game::LoadHighScoreFromFile()
 {
     int loadedHighScore = 0;
+    #ifdef EMSCRIPTEN_BUILD
+    // Use browser's localStorage for web builds
+    loadedHighScore = EM_ASM_INT({
+        var score = Module['localStorage'].getItem("snake_highscore");
+        return score ? parseInt(score) : 0;
+    });
+    #else
     std::ifstream highscoreFile("highscore.txt");
     if (highscoreFile.is_open())
     {
@@ -378,6 +396,7 @@ int Game::LoadHighScoreFromFile()
     {
         std::cerr << "Failed to load highscore from file\n";
     }
+    #endif
     return loadedHighScore;
 }
 

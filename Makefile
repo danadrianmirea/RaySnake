@@ -26,7 +26,7 @@
 # Define required raylib variables
 PROJECT_NAME       ?= game
 RAYLIB_VERSION     ?= 4.5.0
-RAYLIB_PATH        ?= ..\..
+RAYLIB_PATH        ?= c:/raylib/raylib
 
 # Define compiler path on Windows
 COMPILER_PATH      ?= C:/raylib/w64devkit/bin
@@ -359,7 +359,7 @@ ifeq ($(PLATFORM),PLATFORM_RPI)
 endif
 ifeq ($(PLATFORM),PLATFORM_WEB)
     # Libraries for web (HTML5) compiling
-    LDLIBS = $(RAYLIB_RELEASE_PATH)/libraylib.bc
+    LDLIBS = libraylib.web.a
 endif
 
 # Define a recursive wildcard function
