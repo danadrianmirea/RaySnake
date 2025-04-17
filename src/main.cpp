@@ -36,6 +36,7 @@ int main()
     {
         gameInstance.Update(dt);
         gameInstance.Draw();
+        dt = GetFrameTime();
     }
     #endif
 

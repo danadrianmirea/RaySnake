@@ -8,6 +8,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Add definition to fix MinGW-w64 quick_exit issues
 add_definitions(-D_GLIBCXX_USE_C99_STDLIB)
 
+# Add static linking flags for MSYS/GCC
+if(MSYS OR MINGW)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -static-libgcc -static-libstdc++")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc -static-libstdc++")
+endif()
+
+# Set Windows subsystem for release builds
+if(MSVC)
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /SUBSYSTEM:WINDOWS")
+elseif(MSYS OR MINGW)
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -mwindows")
+endif()
+
 # Find GLFW package
 find_package(glfw3 REQUIRED)
 
@@ -54,9 +67,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ws2_32
 )
 
-# Copy assets to output directory
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/assets"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
+# Copy assets to output directory and create a working directory
+set(ASSETS_DIR "${CMAKE_BINARY_DIR}/assets")
+file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${ASSETS_DIR})
+
+# Set the working directory for the executable
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    VS_DEBUGGER_ENVIRONMENT "PATH=${CMAKE_BINARY_DIR}"
 ) 
