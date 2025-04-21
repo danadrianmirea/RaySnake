@@ -57,11 +57,7 @@ void Game::Update(float dt)
         GameOver();
         return;
     }
-#ifdef EMSCRIPTEN_BUILD
-    screenScale = MIN((float)GetScreenWidth() / gameScreenWidth * WEB_SCREEN_SCALE, (float)GetScreenHeight() / gameScreenHeight * WEB_SCREEN_SCALE);
-#else
     screenScale = MIN((float)GetScreenWidth() / gameScreenWidth, (float)GetScreenHeight() / gameScreenHeight);
-#endif
 
     UpdateUI();
 
@@ -366,7 +362,7 @@ void Game::DrawScreenSpaceUI()
 {
     float scaledWidth = 1000 * screenScale;
     float scaledHeight = 120 * screenScale;
-    float scaledFontSize = 40 * screenScale;
+    float scaledFontSize = 30 * screenScale;
     float scaledOffsetX = 500 * screenScale;
     float scaledOffsetY = 40 * screenScale;
     float scaledTextOffsetX = 400 * screenScale;

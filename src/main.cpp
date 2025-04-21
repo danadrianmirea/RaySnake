@@ -23,15 +23,14 @@ int main()
     SetExitKey(KEY_NULL);
     SetWindowPosition(50, 50);
     SetTargetFPS(144);
+    ToggleBorderlessWindowed();
 
     Game gameInstance;
     #ifdef EMSCRIPTEN_BUILD
     game = &gameInstance;
     emscripten_set_main_loop(mainLoop, 0, 1);
     #else
-    ToggleBorderlessWindowed();
     float dt = 0.0f;
-
     while (!exitWindow)
     {
         gameInstance.Update(dt);

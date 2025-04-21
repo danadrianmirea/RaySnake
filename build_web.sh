@@ -16,7 +16,7 @@ emcc src/*.cpp -o web-build/index.html \
   --preload-file Graphics/food.png@/Graphics/food.png \
   --preload-file Font@/Font \
   --preload-file Sounds@/Sounds \
-  --shell-file minshell.html
+  --shell-file custom_shell.html
 
 # Check if the emcc build was successful
 if [ $? -eq 0 ]; then

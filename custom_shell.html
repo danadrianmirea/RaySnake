@@ -61,6 +61,20 @@
         }
     </script>
 	
+	<script>
+	  function resizeCanvas() {
+		var canvas = document.getElementById('canvas');
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+
+		if (Module && Module.setCanvasSize) {
+		  Module.setCanvasSize(canvas.width, canvas.height);
+		}
+	  }
+
+	  window.addEventListener('resize', resizeCanvas);
+	  window.addEventListener('load', resizeCanvas);
+	</script>	
     </head>
 	
     <body>

@@ -11,8 +11,6 @@ const int offset = 75;
 
 Color grey = Color{ 29, 29, 27, 255 };
 Color yellow = Color{ 243, 216, 63, 255 };
-int windowWidth = 1920;
-int windowHeight = 1080;
 const int gameScreenWidth = 2 * offset + cellSize * cellCount;
 const int gameScreenHeight = 2 * offset + cellSize * cellCount;
 
