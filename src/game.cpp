@@ -362,7 +362,7 @@ void Game::DrawScreenSpaceUI()
 {
     float scaledWidth = 1000 * screenScale;
     float scaledHeight = 120 * screenScale;
-    float scaledFontSize = 30 * screenScale;
+    float scaledFontSize = 40 * screenScale;
     float scaledOffsetX = 500 * screenScale;
     float scaledOffsetY = 40 * screenScale;
     float scaledTextOffsetX = 400 * screenScale;
