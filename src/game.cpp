@@ -1,7 +1,6 @@
 #include <string>
 #include "game.h"
 #include "globals.h"
-#include "screen_utils.h"
 
 #include <fstream>
 #include <iostream>
@@ -59,7 +58,7 @@ void Game::Update(float dt)
         return;
     }
 #ifdef EMSCRIPTEN_BUILD
-    screenScale = MIN((float)GetScreenWidthWrapper() / gameScreenWidth * WEB_SCREEN_SCALE, (float)GetScreenHeightWrapper() / gameScreenHeight * WEB_SCREEN_SCALE);
+    screenScale = MIN((float)GetScreenWidth() / gameScreenWidth * WEB_SCREEN_SCALE, (float)GetScreenHeight() / gameScreenHeight * WEB_SCREEN_SCALE);
 #else
     screenScale = MIN((float)GetScreenWidth() / gameScreenWidth, (float)GetScreenHeight() / gameScreenHeight);
 #endif
@@ -288,7 +287,7 @@ void Game::Draw()
     BeginDrawing();
     ClearBackground(BLACK);
     DrawTexturePro(targetRenderTex.texture, (Rectangle){0.0f, 0.0f, (float)targetRenderTex.texture.width, (float)-targetRenderTex.texture.height},
-                   (Rectangle){(GetScreenWidthWrapper() - ((float)gameScreenWidth * screenScale)) * 0.5f, (GetScreenHeightWrapper() - ((float)gameScreenHeight * screenScale)) * 0.5f, (float)gameScreenWidth * screenScale, (float)gameScreenHeight * screenScale},
+                   (Rectangle){(GetScreenWidth() - ((float)gameScreenWidth * screenScale)) * 0.5f, (GetScreenHeight() - ((float)gameScreenHeight * screenScale)) * 0.5f, (float)gameScreenWidth * screenScale, (float)gameScreenHeight * screenScale},
                    (Vector2){0, 0}, 0.0f, WHITE);
 
     DrawScreenSpaceUI();
@@ -365,33 +364,41 @@ int Game::LoadHighScoreFromFile()
 
 void Game::DrawScreenSpaceUI()
 {
+    float scaledWidth = 1000 * screenScale;
+    float scaledHeight = 120 * screenScale;
+    float scaledFontSize = 40 * screenScale;
+    float scaledOffsetX = 500 * screenScale;
+    float scaledOffsetY = 40 * screenScale;
+    float scaledTextOffsetX = 400 * screenScale;
+    float scaledTextOffsetY = 200 * screenScale;
+
     if (exitWindowRequested)
     {
-        DrawRectangleRounded({(float)(GetScreenWidthWrapper() / 2 - 500), (float)(GetScreenHeightWrapper() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
-        DrawText("Are you sure you want to exit? [Y/N]", GetScreenWidthWrapper() / 2 - 400, GetScreenHeightWrapper() / 2, 40, WHITE);
+        DrawRectangleRounded({(float)(GetScreenWidth() - scaledWidth) * 0.5f, (float)(GetScreenHeight() - scaledHeight) * 0.5f, scaledWidth, scaledHeight}, 0.76f, 20, GRAY);
+        DrawText("Are you sure you want to exit? [Y/N]", (GetScreenWidth() - scaledTextOffsetX * 2) * 0.5f, (GetScreenHeight() - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
     }
     else if (firstTimeGameStart)
     {
-        DrawRectangleRounded({(float)(GetScreenWidthWrapper() / 2 - 500), (float)(GetScreenHeightWrapper() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
-        DrawText("Press ENTER to play", GetScreenWidthWrapper() / 2 - 200, GetScreenHeightWrapper() / 2, 40, WHITE);
+        DrawRectangleRounded({(float)(GetScreenWidth() - scaledWidth) * 0.5f, (float)(GetScreenHeight() - scaledHeight) * 0.5f, scaledWidth, scaledHeight}, 0.76f, 20, GRAY);
+        DrawText("Press ENTER to play", (GetScreenWidth() - scaledTextOffsetX) * 0.5f, (GetScreenHeight() - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
     }
     else if (paused)
     {
-        DrawRectangleRounded({(float)(GetScreenWidthWrapper() / 2 - 500), (float)(GetScreenHeightWrapper() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
+        DrawRectangleRounded({(float)(GetScreenWidth() - scaledWidth) * 0.5f, (float)(GetScreenHeight() - scaledHeight) * 0.5f, scaledWidth, scaledHeight}, 0.76f, 20, GRAY);
 #ifdef EMSCRIPTEN_BUILD
-        DrawText("Game paused, press P or ESC to continue", GetScreenWidthWrapper() / 2 - 400, GetScreenHeightWrapper() / 2, 40, WHITE);
+        DrawText("Game paused, press P or ESC to continue", (GetScreenWidth() - scaledTextOffsetX * 2) * 0.5f, (GetScreenHeight() - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
 #else
-        DrawText("Game paused, press P to continue", GetScreenWidthWrapper() / 2 - 400, GetScreenHeightWrapper() / 2, 40, WHITE);
+        DrawText("Game paused, press P to continue", (GetScreenWidth() - scaledTextOffsetX * 2) * 0.5f, (GetScreenHeight() - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
 #endif
     }
     else if (lostWindowFocus)
     {
-        DrawRectangleRounded({(float)(GetScreenWidthWrapper() / 2 - 500), (float)(GetScreenHeightWrapper() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
-        DrawText("Game paused, focus window to continue", GetScreenWidthWrapper() / 2 - 400, GetScreenHeightWrapper() / 2, 40, WHITE);
+        DrawRectangleRounded({(float)(GetScreenWidth() - scaledWidth) * 0.5f, (float)(GetScreenHeight() - scaledHeight) * 0.5f, scaledWidth, scaledHeight}, 0.76f, 20, GRAY);
+        DrawText("Game paused, focus window to continue", (GetScreenWidth() - scaledTextOffsetX * 2) * 0.5f, (GetScreenHeight() - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
     }
     else if (gameOver)
     {
-        DrawRectangleRounded({(float)(GetScreenWidthWrapper() / 2 - 500), (float)(GetScreenHeightWrapper() / 2 - 40), 1000, 120}, 0.76f, 20, GRAY);
-        DrawText("Game over, press ENTER to play again", GetScreenWidthWrapper() / 2 - 400, GetScreenHeightWrapper() / 2, 40, WHITE);
+        DrawRectangleRounded({(float)(GetScreenWidth() - scaledWidth) * 0.5f, (float)(GetScreenHeight() - scaledHeight) * 0.5f, scaledWidth, scaledHeight}, 0.76f, 20, GRAY);
+        DrawText("Game over, press ENTER to play again", (GetScreenWidth() - scaledTextOffsetX * 2) * 0.5f, (GetScreenHeight() - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
     }
 }
