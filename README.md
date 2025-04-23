@@ -57,6 +57,7 @@ cmake --build build
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
 Big thanks to https://github.com/educ8s (https://www.youtube.com/@programmingwithnick) for making great Raylib tutorials on youtube.
 
 ## Acknowledgments
