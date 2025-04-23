@@ -276,7 +276,7 @@ void Game::Draw()
     snake.Draw();
     food.Draw();
     DrawUI();
-
+   
     EndTextureMode();
 
     // render the scaled frame texture to the screen
@@ -286,12 +286,17 @@ void Game::Draw()
                    (Rectangle){(GetScreenWidth() - ((float)gameScreenWidth * screenScale)) * 0.5f, (GetScreenHeight() - ((float)gameScreenHeight * screenScale)) * 0.5f, (float)gameScreenWidth * screenScale, (float)gameScreenHeight * screenScale},
                    (Vector2){0, 0}, 0.0f, WHITE);
 
-    DrawScreenSpaceUI();
+
     EndDrawing();
 }
 
 void Game::DrawUI()
 {
+    float width = 700;
+    float height = 120;
+    float fontSize = 30;
+    float textOffsetX = 300;
+
     DrawText("Snake. WASD to play, ESC to exit, P to pause", offset, 0, 30, WHITE);
     // DrawText("", offset - 5, offset + cellSize * cellCount + 10, 40, WHITE);
 
@@ -304,6 +309,36 @@ void Game::DrawUI()
     std::string highScoreText = FormatWithLeadingZeroes(highScore, 7);
     DrawText("High Score: ", offset - 5 + 400, offset + cellSize * cellCount + 10, 30, WHITE);
     DrawText(highScoreText.c_str(), offset - 5 + 590, offset + cellSize * cellCount + 10, 30, WHITE);
+
+    if (exitWindowRequested)
+    {
+        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
+        DrawText("Are you sure you want to exit? [Y/N]", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+    }
+    else if (firstTimeGameStart)
+    {
+        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
+        DrawText("Press ENTER to play", (gameScreenWidth - textOffsetX) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+    }
+    else if (paused)
+    {
+        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
+#ifdef EMSCRIPTEN_BUILD
+        DrawText("Game paused, press P or ESC to continue", (gameScreenWidth - scaledTextOffsetX * 2) * 0.5f, (gameScreenHeight - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
+#else
+        DrawText("Game paused, press P to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+#endif
+    }
+    else if (lostWindowFocus)
+    {
+        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
+        DrawText("Game paused, focus window to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+    }
+    else if (gameOver)
+    {
+        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
+        DrawText("Game over, press ENTER to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+    }
 }
 
 std::string Game::FormatWithLeadingZeroes(int number, int width)
@@ -356,45 +391,4 @@ int Game::LoadHighScoreFromFile()
     }
 #endif
     return loadedHighScore;
-}
-
-void Game::DrawScreenSpaceUI()
-{
-    float scaledWidth = 1000 * screenScale;
-    float scaledHeight = 120 * screenScale;
-    float scaledFontSize = 40 * screenScale;
-    float scaledOffsetX = 500 * screenScale;
-    float scaledOffsetY = 40 * screenScale;
-    float scaledTextOffsetX = 400 * screenScale;
-    float scaledTextOffsetY = 200 * screenScale;
-
-    if (exitWindowRequested)
-    {
-        DrawRectangleRounded({(float)(GetScreenWidth() - scaledWidth) * 0.5f, (float)(GetScreenHeight() - scaledHeight) * 0.5f, scaledWidth, scaledHeight}, 0.76f, 20, GRAY);
-        DrawText("Are you sure you want to exit? [Y/N]", (GetScreenWidth() - scaledTextOffsetX * 2) * 0.5f, (GetScreenHeight() - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
-    }
-    else if (firstTimeGameStart)
-    {
-        DrawRectangleRounded({(float)(GetScreenWidth() - scaledWidth) * 0.5f, (float)(GetScreenHeight() - scaledHeight) * 0.5f, scaledWidth, scaledHeight}, 0.76f, 20, GRAY);
-        DrawText("Press ENTER to play", (GetScreenWidth() - scaledTextOffsetX) * 0.5f, (GetScreenHeight() - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
-    }
-    else if (paused)
-    {
-        DrawRectangleRounded({(float)(GetScreenWidth() - scaledWidth) * 0.5f, (float)(GetScreenHeight() - scaledHeight) * 0.5f, scaledWidth, scaledHeight}, 0.76f, 20, GRAY);
-#ifdef EMSCRIPTEN_BUILD
-        DrawText("Game paused, press P or ESC to continue", (GetScreenWidth() - scaledTextOffsetX * 2) * 0.5f, (GetScreenHeight() - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
-#else
-        DrawText("Game paused, press P to continue", (GetScreenWidth() - scaledTextOffsetX * 2) * 0.5f, (GetScreenHeight() - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
-#endif
-    }
-    else if (lostWindowFocus)
-    {
-        DrawRectangleRounded({(float)(GetScreenWidth() - scaledWidth) * 0.5f, (float)(GetScreenHeight() - scaledHeight) * 0.5f, scaledWidth, scaledHeight}, 0.76f, 20, GRAY);
-        DrawText("Game paused, focus window to continue", (GetScreenWidth() - scaledTextOffsetX * 2) * 0.5f, (GetScreenHeight() - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
-    }
-    else if (gameOver)
-    {
-        DrawRectangleRounded({(float)(GetScreenWidth() - scaledWidth) * 0.5f, (float)(GetScreenHeight() - scaledHeight) * 0.5f, scaledWidth, scaledHeight}, 0.76f, 20, GRAY);
-        DrawText("Game over, press ENTER to play again", (GetScreenWidth() - scaledTextOffsetX * 2) * 0.5f, (GetScreenHeight() - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
-    }
 }

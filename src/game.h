@@ -17,7 +17,6 @@ public:
     void UpdateUI();
     void Draw();
     void DrawUI();
-    void DrawScreenSpaceUI();
 
     void CheckCollisionWithFood();
     void CheckCollisionWithEdges();
