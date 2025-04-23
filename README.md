@@ -58,9 +58,9 @@ cmake --build build
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-Big thanks to https://github.com/educ8s (https://www.youtube.com/@programmingwithnick) for making great Raylib tutorials on youtube.
 
 ## Acknowledgments
 
 - Built with [Raylib](https://www.raylib.com/)
 - Inspired by the classic Snake game
+- Big thanks to https://github.com/educ8s (https://www.youtube.com/@programmingwithnick) for making great Raylib tutorials on youtube.
