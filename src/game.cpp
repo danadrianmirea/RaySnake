@@ -324,7 +324,7 @@ void Game::DrawUI()
     {
         DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
 #ifdef EMSCRIPTEN_BUILD
-        DrawText("Game paused, press P or ESC to continue", (gameScreenWidth - scaledTextOffsetX * 2) * 0.5f, (gameScreenHeight - scaledFontSize) * 0.5f, scaledFontSize, WHITE);
+        DrawText("Game paused, press P or ESC to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
 #else
         DrawText("Game paused, press P to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
 #endif
