@@ -95,14 +95,7 @@ void Game::UpdateUI()
 #ifdef EMSCRIPTEN_BUILD
     if (IsKeyPressed(KEY_ESCAPE))
     {
-        if (paused)
-        {
-            paused = false;
-        }
-        else
-        {
-            paused = true;
-        }
+        paused = !paused;
         return;
     }
 #else
@@ -135,13 +128,29 @@ void Game::UpdateUI()
     }
 #endif
 
-    if (firstTimeGameStart && IsKeyPressed(KEY_ENTER))
+    if (firstTimeGameStart)
     {
-        firstTimeGameStart = false;
+        if (isMobile && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            firstTimeGameStart = false;
+            return;
+        }
+        else if (IsKeyPressed(KEY_ENTER))
+        {
+            firstTimeGameStart = false;
+        }
     }
-    else if (gameOver && IsKeyPressed(KEY_ENTER))
+    else if (gameOver)
     {
-        Reset();
+        if (isMobile && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            Reset();
+            return;
+        }
+        else if (IsKeyPressed(KEY_ENTER))
+        {
+            Reset();
+        }
     }
 
     if (exitWindowRequested)
@@ -166,15 +175,29 @@ void Game::UpdateUI()
         lostWindowFocus = false;
     }
 
-    if (exitWindowRequested == false && lostWindowFocus == false && gameOver == false && isFirstFrameAfterReset == false && IsKeyPressed(KEY_P))
+    if (exitWindowRequested == false && lostWindowFocus == false && gameOver == false && isFirstFrameAfterReset == false)
     {
-        if (paused)
+        if (isMobile)
         {
-            paused = false;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                touchStartPos = GetMousePosition();
+            }
+            else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+            {
+                Vector2 touchEndPos = GetMousePosition();
+                Vector2 movement = Vector2Subtract(touchEndPos, touchStartPos);
+                
+                if (Vector2Length(movement) < SWIPE_THRESHOLD)
+                {
+                    // It's a tap, pause the game
+                    paused = !paused;
+                }
+            }
         }
-        else
+        else if (IsKeyPressed(KEY_P))
         {
-            paused = true;
+            paused = !paused;
         }
     }
 }
@@ -190,6 +213,48 @@ void Game::HandleInput()
     if(inputProcessed)
     {
         return;
+    }
+
+    if (isMobile && !firstTimeGameStart && !gameOver)
+    {
+        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+        {
+            Vector2 touchEndPos = GetMousePosition();
+            Vector2 movement = Vector2Subtract(touchEndPos, touchStartPos);
+            
+            if (Vector2Length(movement) >= SWIPE_THRESHOLD)
+            {
+                // Determine primary direction of swipe
+                if (abs(movement.x) > abs(movement.y))
+                {
+                    // Horizontal swipe
+                    if (movement.x > 0 && !Vector2Equals(snake.direction, Vector2{-1, 0}))
+                    {
+                        snake.direction = {1, 0}; // Right
+                        inputProcessed = true;
+                    }
+                    else if (movement.x < 0 && !Vector2Equals(snake.direction, Vector2{1, 0}))
+                    {
+                        snake.direction = {-1, 0}; // Left
+                        inputProcessed = true;
+                    }
+                }
+                else
+                {
+                    // Vertical swipe
+                    if (movement.y > 0 && !Vector2Equals(snake.direction, Vector2{0, -1}))
+                    {
+                        snake.direction = {0, 1}; // Down
+                        inputProcessed = true;
+                    }
+                    else if (movement.y < 0 && !Vector2Equals(snake.direction, Vector2{0, 1}))
+                    {
+                        snake.direction = {0, -1}; // Up
+                        inputProcessed = true;
+                    }
+                }
+            }
+        }
     }
 
     if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W))
@@ -308,7 +373,11 @@ void Game::DrawUI()
     float fontSize = 30;
     float textOffsetX = 300;
 
-    DrawText("Snake. WASD to play, ESC to exit, P to pause", offset, 0, 30, WHITE);
+    if (isMobile) {
+        DrawText("Snake. Swipe to control, tap to pause", offset, 0, 30, WHITE);
+    } else {
+        DrawText("Snake. WASD to play, ESC to exit, P to pause", offset, 0, 30, WHITE);
+    }
     // DrawText("", offset - 5, offset + cellSize * cellCount + 10, 40, WHITE);
 
     DrawRectangleLinesEx(Rectangle{(float)offset - 5, (float)offset - 5, (float)cellSize * cellCount + 10, (float)cellSize * cellCount + 10}, 5.0f, WHITE);
@@ -329,13 +398,24 @@ void Game::DrawUI()
     else if (firstTimeGameStart)
     {
         DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
-        DrawText("Press ENTER to play", (gameScreenWidth - textOffsetX) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+        if (isMobile) {
+            DrawText("Tap to play", (gameScreenWidth - textOffsetX) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+        } else {
+            DrawText("Press ENTER to play", (gameScreenWidth - textOffsetX) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+        }
     }
     else if (paused)
     {
         DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
 #ifdef EMSCRIPTEN_BUILD
-        DrawText("Game paused, press P or ESC to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+        if(isMobile)
+        {
+            DrawText("Game paused, tap to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+        }
+        else
+        {
+            DrawText("Game paused, press P or ESC to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+        }
 #else
         DrawText("Game paused, press P to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
 #endif
@@ -348,7 +428,11 @@ void Game::DrawUI()
     else if (gameOver)
     {
         DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
-        DrawText("Game over, press ENTER to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+        if (isMobile) {
+            DrawText("Game over, tap to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+        } else {
+            DrawText("Game over, press ENTER to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+        }
     }
 }
 

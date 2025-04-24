@@ -51,7 +51,6 @@ private:
     float timePassedSinceLastSnakeUpdate;
     float snakeUpdateTime;
     const float snakeUpdateSpeedIncrement = 0.005;
-    //const int maxPoints = 50;
     const float snakeUpdateTimeLimit = 0.09f;
 
     float screenScale;
@@ -59,4 +58,8 @@ private:
     Font font;
 
     bool inputProcessed;
+    
+    // Touch state tracking
+    Vector2 touchStartPos;
+    const float SWIPE_THRESHOLD = 20.0f; // Minimum distance for a swipe
 };
