@@ -5,8 +5,19 @@
 #include <fstream>
 #include <iostream>
 
+#ifdef EMSCRIPTEN_BUILD
+#include <emscripten.h>
+#endif
+
+bool Game::isMobile = false;
+
 Game::Game()
 {
+#ifdef EMSCRIPTEN_BUILD
+    isMobile = EM_ASM_INT({
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    });
+#endif
     firstTimeGameStart = true;
     targetRenderTex = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
     SetTextureFilter(targetRenderTex.texture, TEXTURE_FILTER_BILINEAR); // Texture scale filter to use

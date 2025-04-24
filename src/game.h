@@ -7,6 +7,7 @@
 class Game
 {
 public:
+    static bool isMobile;
     Game();
     void InitGame();
     ~Game();
