@@ -19,6 +19,9 @@ void mainLoop() {
 int main()
 {
     InitWindow(gameScreenWidth, gameScreenHeight, "Snake");
+#ifndef EMSCRIPTEN_BUILD
+    SetWindowState(FLAG_WINDOW_RESIZABLE);
+#endif    
     SetMasterVolume(0.22f);
     SetExitKey(KEY_NULL);
     SetWindowPosition(50, 50);

@@ -105,27 +105,20 @@ void Game::UpdateUI()
         isInExitMenu = true;
         return;
     }
-#endif
 
-#ifdef AM_RAY_DEBUG
     if (IsKeyPressed(KEY_ENTER) && (IsKeyDown(KEY_LEFT_ALT) || IsKeyDown(KEY_RIGHT_ALT)))
     {
         if (fullscreen)
         {
             fullscreen = false;
-            #ifndef EMSCRIPTEN_BUILD
             ToggleBorderlessWindowed();
-            SetWindowPosition(minimizeOffset, minimizeOffset);
-            #endif
         }
         else
         {
             fullscreen = true;
-            #ifndef EMSCRIPTEN_BUILD
             ToggleBorderlessWindowed();
-            #endif
         }
-    }
+    }   
 #endif
 
     if (firstTimeGameStart)
