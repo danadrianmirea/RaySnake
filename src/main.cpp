@@ -24,15 +24,17 @@ int main()
 #endif    
     SetMasterVolume(0.22f);
     SetExitKey(KEY_NULL);
-    SetWindowPosition(50, 50);
     SetTargetFPS(144);
-    ToggleBorderlessWindowed();
+    
 
     Game gameInstance;
-    #ifdef EMSCRIPTEN_BUILD
+#ifdef EMSCRIPTEN_BUILD
     game = &gameInstance;
     emscripten_set_main_loop(mainLoop, 0, 1);
-    #else
+#else
+    if (fullscreen) { 
+        ToggleBorderlessWindowed();
+    }
     float dt = 0.0f;
     while (!exitWindow)
     {

@@ -367,9 +367,14 @@ void Game::DrawUI()
     float textOffsetX = 300;
 
     if (isMobile) {
-        DrawText("Snake. Swipe to control, tap to pause", offset, 0, 30, WHITE);
+        DrawText("Swipe to control, tap to pause", offset + 140, 0, 30, WHITE);
     } else {
-        DrawText("Snake. WASD to play, ESC to exit, P to pause", offset, 0, 30, WHITE);
+#ifndef EMSCRIPTEN_BUILD
+        DrawText("WASD to play, ESC: exit, P: pause", offset + 120, 0, 30, WHITE);
+        DrawText("Alt+Enter: fullscreen", offset + 120, 40, 30, WHITE);
+#else
+        DrawText("WASD to play, ESC/P: pause", offset + 150, 20, 30, WHITE);
+#endif
     }
     // DrawText("", offset - 5, offset + cellSize * cellCount + 10, 40, WHITE);
 
@@ -392,7 +397,7 @@ void Game::DrawUI()
     {
         DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
         if (isMobile) {
-            DrawText("Tap to play", (gameScreenWidth - textOffsetX) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+            DrawText("Tap to play", (gameScreenWidth - textOffsetX + 100) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
         } else {
             DrawText("Press ENTER to play", (gameScreenWidth - textOffsetX) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
         }
