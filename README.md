@@ -2,6 +2,8 @@
 
 A classic Snake game implementation using Raylib, combining retro gaming charm with modern graphics capabilities.
 
+Play on itch.io: https://adrianmirea.itch.io/
+
 ## Description
 
 RaySnake is a modern take on the classic Snake game, built using the Raylib graphics library. Navigate your snake through the game board, eat food to grow longer, and avoid colliding with walls and yourself!
