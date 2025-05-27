@@ -5,6 +5,9 @@ project(RaySnake VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Generate compile_commands.json
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Set raylib path
 set(RAYLIB_PATH "C:/raylib/raylib" CACHE PATH "Path to raylib source directory")
 

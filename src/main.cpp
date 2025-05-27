@@ -22,7 +22,7 @@ int main()
 #ifndef EMSCRIPTEN_BUILD
     SetWindowState(FLAG_WINDOW_RESIZABLE);
 #endif    
-    SetMasterVolume(0.22f);
+    SetMasterVolume(0.5f);
     SetExitKey(KEY_NULL);
     SetTargetFPS(144);
     
