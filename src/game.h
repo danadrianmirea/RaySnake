@@ -54,7 +54,7 @@ private:
 
     static constexpr float startingSnakeUpdateTime = 0.1f;
     static constexpr float snakeUpdateTimeIncrement = 0.000083333f;
-    static constexpr float snakeUpdateTimeLimit = 0.05f;
+    static constexpr float snakeUpdateTimeLimit = 0.06f;
     
     float timePassedSinceLastSnakeUpdate;
     float snakeUpdateTime;
