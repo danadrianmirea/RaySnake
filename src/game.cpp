@@ -419,22 +419,24 @@ void Game::DrawUI()
     // DrawText("", offset - 5, offset + cellSize * cellCount + 10, 40, WHITE);
 
     // Draw grid lines
-    Color gridColor = { 128, 128, 128, 64 }; // Semi-transparent gray
-    for (int i = 0; i <= cellCount; i++) {
-        // Vertical lines
-        DrawLineEx(
-            Vector2{(float)offset + i * cellSize, (float)offset},
-            Vector2{(float)offset + i * cellSize, (float)offset + cellCount * cellSize},
-            1.0f,
-            gridColor
-        );
-        // Horizontal lines
-        DrawLineEx(
-            Vector2{(float)offset, (float)offset + i * cellSize},
-            Vector2{(float)offset + cellCount * cellSize, (float)offset + i * cellSize},
-            1.0f,
-            gridColor
-        );
+    if(!isMobile) {
+        Color gridColor = { 128, 128, 128, 64 }; // Semi-transparent gray
+        for (int i = 0; i <= cellCount; i++) {
+            // Vertical lines
+            DrawLineEx(
+                Vector2{(float)offset + i * cellSize, (float)offset},
+                Vector2{(float)offset + i * cellSize, (float)offset + cellCount * cellSize},
+                1.0f,
+                gridColor
+            );
+            // Horizontal lines
+            DrawLineEx(
+                Vector2{(float)offset, (float)offset + i * cellSize},
+                Vector2{(float)offset + cellCount * cellSize, (float)offset + i * cellSize},
+                1.0f,
+                gridColor
+            );
+        }
     }
 
     DrawRectangleLinesEx(Rectangle{(float)offset - 5, (float)offset - 5, (float)cellSize * cellCount + 10, (float)cellSize * cellCount + 10}, 5.0f, BLACK);
