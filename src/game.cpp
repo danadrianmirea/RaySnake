@@ -26,6 +26,7 @@ Game::Game()
     eatSound = LoadSound("Sounds/eat.mp3");
     wallSound = LoadSound("Sounds/wall.mp3");
     Food::InitTexture(); // Initialize the food texture
+    Snake::InitTextures(); // Initialize the snake textures
     InitGame();
 }
 
@@ -56,6 +57,7 @@ Game::~Game()
     UnloadRenderTexture(targetRenderTex);
     UnloadFont(font);
     Food::UnloadTexture(); // Clean up the food texture
+    Snake::UnloadTextures(); // Clean up the snake textures
     CloseAudioDevice();
 }
 
