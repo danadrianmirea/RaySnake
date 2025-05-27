@@ -25,6 +25,7 @@ Game::Game()
     InitAudioDevice();
     eatSound = LoadSound("Sounds/eat.mp3");
     wallSound = LoadSound("Sounds/wall.mp3");
+    Food::InitTexture(); // Initialize the food texture
     InitGame();
 }
 
@@ -54,6 +55,7 @@ Game::~Game()
     UnloadSound(wallSound);
     UnloadRenderTexture(targetRenderTex);
     UnloadFont(font);
+    Food::UnloadTexture(); // Clean up the food texture
     CloseAudioDevice();
 }
 

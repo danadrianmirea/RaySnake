@@ -9,7 +9,10 @@ class Food
 {
 public:
     Vector2 position;
-    Texture2D texture;
+    static Texture2D texture;
+    static bool isTextureLoaded;
+    static void InitTexture();
+    static void UnloadTexture();
     Food() = delete;
     Food(deque<Vector2> snakeBody);
     ~Food();
