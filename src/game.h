@@ -45,6 +45,7 @@ private:
     Sound eatSound;
     Sound wallSound;
     Music music; // Background music
+    bool musicPaused = false;
 
     int score;
     int highScore;

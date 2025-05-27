@@ -73,6 +73,15 @@ void Game::Reset()
 
 void Game::Update(float dt)
 {
+    if (IsKeyPressed(KEY_M)) {
+        if (musicPaused) {
+            ResumeMusicStream(music);
+            musicPaused = false;
+        } else {
+            PauseMusicStream(music);
+            musicPaused = true;
+        }
+    }
     UpdateMusicStream(music);
     if ((int)snake.body.size() > cellCount * cellCount - 1)
     {
@@ -378,7 +387,7 @@ void Game::Draw()
 
     // render the scaled frame texture to the screen
     BeginDrawing();
-    ClearBackground(GREEN);
+    ClearBackground(BLACK);
     DrawTexturePro(targetRenderTex.texture, (Rectangle){0.0f, 0.0f, (float)targetRenderTex.texture.width, (float)-targetRenderTex.texture.height},
                    (Rectangle){(GetScreenWidth() - ((float)gameScreenWidth * screenScale)) * 0.5f, (GetScreenHeight() - ((float)gameScreenHeight * screenScale)) * 0.5f, (float)gameScreenWidth * screenScale, (float)gameScreenHeight * screenScale},
                    (Vector2){0, 0}, 0.0f, WHITE);
@@ -401,10 +410,10 @@ void Game::DrawUI()
         DrawText("Swipe to control, tap title bar to pause", offset + 50, 0, 30, BLACK);
     } else {
 #ifndef EMSCRIPTEN_BUILD
-        DrawText("WASD to play, ESC: exit, P: pause", offset + 120, 0, 30, BLACK);
-        DrawText("Alt+Enter: fullscreen", offset + 120, 40, 30, BLACK);
+        DrawText("WASD to play, ESC: exit, P: pause", offset + 100, 0, 30, BLACK);
+        DrawText("Alt+Enter: fullscreen, M: toggle music", offset + 100, 40, 30, BLACK);
 #else
-        DrawText("WASD to play, ESC/P: pause", offset + 150, 20, 30, BLACK);
+        DrawText("WASD to play, ESC/P: pause, M: toggle music", offset + 30, 20, 30, BLACK);
 #endif
     }
     // DrawText("", offset - 5, offset + cellSize * cellCount + 10, 40, WHITE);
