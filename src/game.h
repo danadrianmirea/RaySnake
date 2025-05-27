@@ -19,9 +19,7 @@ public:
     void Draw();
     void DrawUI();
 
-    void CheckCollisionWithFood();
-    void CheckCollisionWithEdges();
-    void CheckCollisionWithSnake();
+    void CheckCollisions();
     void GameOver();
     std::string FormatWithLeadingZeroes(int number, int width);
     
@@ -57,8 +55,6 @@ private:
     RenderTexture2D targetRenderTex;
     Font font;
 
-    bool inputProcessed;
-    
     // Touch state tracking
     Vector2 touchStartPos;
     const float SWIPE_THRESHOLD = 20.0f; // Minimum distance for a swipe

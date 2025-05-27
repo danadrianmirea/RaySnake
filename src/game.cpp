@@ -76,17 +76,16 @@ void Game::Update(float dt)
     if (running)
     {
         HandleInput();
+
         timePassedSinceLastSnakeUpdate += GetFrameTime();
         if (timePassedSinceLastSnakeUpdate >= snakeUpdateTime)
         {
             timePassedSinceLastSnakeUpdate = 0.0f;
             snake.Update();
-            inputProcessed = false;
+            //inputProcessed = false;
         }
 
-        CheckCollisionWithFood();
-        CheckCollisionWithEdges();
-        CheckCollisionWithSnake();
+        CheckCollisions();
     }
 }
 
@@ -203,47 +202,38 @@ void Game::HandleInput()
         return;
     }
 
-    if(inputProcessed)
-    {
-        return;
-    }
-
     if (isMobile && !firstTimeGameStart && !gameOver)
     {
         if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
         {
             Vector2 touchEndPos = GetMousePosition();
-            Vector2 movement = Vector2Subtract(touchEndPos, touchStartPos);
+            Vector2 touchMovement = Vector2Subtract(touchEndPos, touchStartPos);
             
-            if (Vector2Length(movement) >= SWIPE_THRESHOLD)
+            if (Vector2Length(touchMovement) >= SWIPE_THRESHOLD)
             {
                 // Determine primary direction of swipe
-                if (abs(movement.x) > abs(movement.y))
+                if (abs(touchMovement.x) > abs(touchMovement.y))
                 {
                     // Horizontal swipe
-                    if (movement.x > 0 && !Vector2Equals(snake.direction, Vector2{-1, 0}))
+                    if (touchMovement.x > 0 && !Vector2Equals(snake.direction, Vector2{-1, 0}))
                     {
                         snake.direction = {1, 0}; // Right
-                        inputProcessed = true;
                     }
-                    else if (movement.x < 0 && !Vector2Equals(snake.direction, Vector2{1, 0}))
+                    else if (touchMovement.x < 0 && !Vector2Equals(snake.direction, Vector2{1, 0}))
                     {
                         snake.direction = {-1, 0}; // Left
-                        inputProcessed = true;
                     }
                 }
                 else
                 {
                     // Vertical swipe
-                    if (movement.y > 0 && !Vector2Equals(snake.direction, Vector2{0, -1}))
+                    if (touchMovement.y > 0 && !Vector2Equals(snake.direction, Vector2{0, -1}))
                     {
                         snake.direction = {0, 1}; // Down
-                        inputProcessed = true;
                     }
-                    else if (movement.y < 0 && !Vector2Equals(snake.direction, Vector2{0, 1}))
+                    else if (touchMovement.y < 0 && !Vector2Equals(snake.direction, Vector2{0, 1}))
                     {
                         snake.direction = {0, -1}; // Up
-                        inputProcessed = true;
                     }
                 }
             }
@@ -256,7 +246,6 @@ void Game::HandleInput()
         {
             snake.direction = {0, -1};
         }
-        inputProcessed = true;
     }
     else if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S))
     {
@@ -264,7 +253,6 @@ void Game::HandleInput()
         {
             snake.direction = {0, 1};
         }
-        inputProcessed = true;
     }
     else if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A))
     {
@@ -272,7 +260,6 @@ void Game::HandleInput()
         {
             snake.direction = {-1, 0};
         }
-        inputProcessed = true;
     }
     else if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D))
     {
@@ -280,12 +267,12 @@ void Game::HandleInput()
         {
             snake.direction = {1, 0};
         }
-        inputProcessed = true;
     }
 }
 
-void Game::CheckCollisionWithFood()
+void Game::CheckCollisions()
 {
+    // food collision
     if (Vector2Equals(snake.body[0], food.position))
     {
         food.position = food.GenerateRandomPos(snake.body);
@@ -304,10 +291,8 @@ void Game::CheckCollisionWithFood()
         }
         // std::cout << "snakeUpdateTime: " << snakeUpdateTime << "\n";
     }
-}
 
-void Game::CheckCollisionWithEdges()
-{
+    // edge collision
     if (snake.body[0].x == cellCount || snake.body[0].x == -1)
     {
         GameOver();
@@ -317,17 +302,16 @@ void Game::CheckCollisionWithEdges()
     {
         GameOver();
     }
-}
 
-void Game::CheckCollisionWithSnake()
-{
+    // snake collision
     for (int i = 1; i < (int)snake.body.size(); i++)
     {
         if (Vector2Equals(snake.body[i], snake.body[0]))
         {
             GameOver();
         }
-    }
+    }    
+    
 }
 
 void Game::GameOver()
