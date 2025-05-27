@@ -3,6 +3,8 @@
 #include <deque>
 using std::deque;
 
+//#define DEBUG_WITH_FULL_SNAKE
+
 #include <raylib.h>
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))

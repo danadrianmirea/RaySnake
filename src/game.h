@@ -24,6 +24,7 @@ public:
 
     void CheckCollisions();
     void GameOver();
+    void GameWin();
     std::string FormatWithLeadingZeroes(int number, int width);
     
     int GetScore() { return score; }
@@ -38,6 +39,7 @@ public:
     bool paused;
     bool lostWindowFocus;
     bool gameOver;
+    bool won;  // New variable to track win state
 
 private:
     Snake snake;
@@ -49,12 +51,13 @@ private:
 
     int score;
     int highScore;
-    bool won;
+
+    static constexpr float startingSnakeUpdateTime = 0.1f;
+    static constexpr float snakeUpdateTimeIncrement = 0.000083333f;
+    static constexpr float snakeUpdateTimeLimit = 0.05f;
     
     float timePassedSinceLastSnakeUpdate;
     float snakeUpdateTime;
-    const float snakeUpdateSpeedIncrement = 0.005;
-    const float snakeUpdateTimeLimit = 0.09f;
 
     float screenScale;
     RenderTexture2D targetRenderTex;

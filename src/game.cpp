@@ -45,7 +45,7 @@ void Game::InitGame()
     won = false;
     screenScale = MIN((float)GetScreenWidth() / gameScreenWidth, (float)GetScreenHeight() / gameScreenHeight);
     timePassedSinceLastSnakeUpdate = 0.0f;
-    snakeUpdateTime = 0.15f;
+    snakeUpdateTime = startingSnakeUpdateTime;
     snake.Reset();
     food.position = food.GenerateRandomPos(snake.body);
     touchStartPos = Vector2{0, 0};
@@ -83,12 +83,8 @@ void Game::Update(float dt)
         }
     }
     UpdateMusicStream(music);
-    if ((int)snake.body.size() > cellCount * cellCount - 1)
-    {
-        won = true;
-        GameOver();
-        return;
-    }
+    
+
     screenScale = MIN((float)GetScreenWidth() / gameScreenWidth, (float)GetScreenHeight() / gameScreenHeight);
 
     UpdateUI();
@@ -107,6 +103,13 @@ void Game::Update(float dt)
         }
 
         CheckCollisions();
+
+        // Check for win condition - if snake fills the entire grid
+        if ((int)snake.body.size() >= cellCount * cellCount - 1)
+        {
+
+            GameWin();
+        }            
     }
 }
 
@@ -334,13 +337,9 @@ void Game::CheckCollisions()
         CheckForHighScore();
         snake.Grow();
         PlaySound(eatSound);
-
-        if (score % 10 == 0)
+        if (snakeUpdateTime > snakeUpdateTimeLimit)
         {
-            if (snakeUpdateTime > snakeUpdateTimeLimit)
-            {
-                snakeUpdateTime -= snakeUpdateSpeedIncrement; // make snake move faster when it eats something
-            }
+            snakeUpdateTime -= snakeUpdateTimeIncrement; // make snake move faster when it eats something
         }
         // std::cout << "snakeUpdateTime: " << snakeUpdateTime << "\n";
     }
@@ -371,6 +370,13 @@ void Game::GameOver()
 {
     gameOver = true;
     PlaySound(wallSound);
+}
+
+void Game::GameWin()
+{
+    won = true;
+    gameOver = true;
+    PlaySound(eatSound);
 }
 
 void Game::Draw()
@@ -488,10 +494,18 @@ void Game::DrawUI()
     else if (gameOver)
     {
         DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, promptBg);
-        if (isMobile) {
-            DrawText("Game over, tap to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
+        if (won) {
+            if (isMobile) {
+                DrawText("You Win! Tap to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
+            } else {
+                DrawText("You Win! Press ENTER to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
+            }
         } else {
-            DrawText("Game over, press ENTER to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
+            if (isMobile) {
+                DrawText("Game over, tap to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
+            } else {
+                DrawText("Game over, press ENTER to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
+            }
         }
     }
 }
