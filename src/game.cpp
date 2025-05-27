@@ -43,7 +43,9 @@ void Game::InitGame()
     snakeUpdateTime = 0.15f;
     snake.Reset();
     food.position = food.GenerateRandomPos(snake.body);
-    inputProcessed = false;
+    touchStartPos = Vector2{0, 0};
+    touchMovement = Vector2{0, 0};
+    keyPresses = {false, false, false, false};
 }
 
 Game::~Game()
@@ -75,14 +77,14 @@ void Game::Update(float dt)
     bool running = (firstTimeGameStart == false && paused == false && lostWindowFocus == false && isInExitMenu == false && gameOver == false);
     if (running)
     {
-        HandleInput();
+        ReadInput();
 
         timePassedSinceLastSnakeUpdate += GetFrameTime();
         if (timePassedSinceLastSnakeUpdate >= snakeUpdateTime)
         {
+            ProcessInput();
             timePassedSinceLastSnakeUpdate = 0.0f;
             snake.Update();
-            //inputProcessed = false;
         }
 
         CheckCollisions();
@@ -194,7 +196,7 @@ void Game::UpdateUI()
     }
 }
 
-void Game::HandleInput()
+void Game::ReadInput()
 {
     if (isFirstFrameAfterReset)
     {
@@ -207,66 +209,95 @@ void Game::HandleInput()
         if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
         {
             Vector2 touchEndPos = GetMousePosition();
-            Vector2 touchMovement = Vector2Subtract(touchEndPos, touchStartPos);
-            
-            if (Vector2Length(touchMovement) >= SWIPE_THRESHOLD)
-            {
-                // Determine primary direction of swipe
-                if (abs(touchMovement.x) > abs(touchMovement.y))
-                {
-                    // Horizontal swipe
-                    if (touchMovement.x > 0 && !Vector2Equals(snake.direction, Vector2{-1, 0}))
-                    {
-                        snake.direction = {1, 0}; // Right
-                    }
-                    else if (touchMovement.x < 0 && !Vector2Equals(snake.direction, Vector2{1, 0}))
-                    {
-                        snake.direction = {-1, 0}; // Left
-                    }
-                }
-                else
-                {
-                    // Vertical swipe
-                    if (touchMovement.y > 0 && !Vector2Equals(snake.direction, Vector2{0, -1}))
-                    {
-                        snake.direction = {0, 1}; // Down
-                    }
-                    else if (touchMovement.y < 0 && !Vector2Equals(snake.direction, Vector2{0, 1}))
-                    {
-                        snake.direction = {0, -1}; // Up
-                    }
-                }
-            }
+            touchMovement = Vector2Subtract(touchEndPos, touchStartPos);
         }
     }
 
     if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W))
     {
-        if (!Vector2Equals(snake.direction, Vector2{0, 1}))
-        {
-            snake.direction = {0, -1};
-        }
+        keyPresses = {false, false, false, false};
+        keyPresses[KeyPress::UP] = true;
     }
     else if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S))
     {
-        if (!Vector2Equals(snake.direction, Vector2{0, -1}))
-        {
-            snake.direction = {0, 1};
-        }
+        keyPresses = {false, false, false, false};
+        keyPresses[KeyPress::DOWN] = true;
     }
     else if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A))
     {
-        if (!Vector2Equals(snake.direction, Vector2{1, 0}))
-        {
-            snake.direction = {-1, 0};
-        }
+        keyPresses = {false, false, false, false};
+        keyPresses[KeyPress::LEFT] = true;
     }
     else if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D))
     {
-        if (!Vector2Equals(snake.direction, Vector2{-1, 0}))
+        keyPresses = {false, false, false, false};
+        keyPresses[KeyPress::RIGHT] = true;
+    }
+}
+
+void Game::ProcessInput()
+{
+    if (isMobile && !firstTimeGameStart && !gameOver)
+    {
+        if (Vector2Length(touchMovement) >= SWIPE_THRESHOLD)
         {
-            snake.direction = {1, 0};
+            // Determine primary direction of swipe
+            if (abs(touchMovement.x) > abs(touchMovement.y))
+            {
+                // Horizontal swipe
+                if (touchMovement.x > 0 && !Vector2Equals(snake.direction, Vector2{-1, 0}))
+                {
+                    snake.direction = {1, 0}; // Right
+                }
+                else if (touchMovement.x < 0 && !Vector2Equals(snake.direction, Vector2{1, 0}))
+                {
+                    snake.direction = {-1, 0}; // Left
+                }
+            }
+            else
+            {
+                // Vertical swipe
+                if (touchMovement.y > 0 && !Vector2Equals(snake.direction, Vector2{0, -1}))
+                {
+                    snake.direction = {0, 1}; // Down
+                }
+                else if (touchMovement.y < 0 && !Vector2Equals(snake.direction, Vector2{0, 1}))
+                {
+                    snake.direction = {0, -1}; // Up
+                }
+            }
+        }        
+    }
+    else if(!firstTimeGameStart && !gameOver)
+    {
+        if (keyPresses[KeyPress::UP])
+        {
+            if (!Vector2Equals(snake.direction, Vector2{0, 1}))
+            {
+                snake.direction = {0, -1};
+            }
         }
+        else if (keyPresses[KeyPress::DOWN])
+        {
+            if (!Vector2Equals(snake.direction, Vector2{0, -1}))
+            {
+                snake.direction = {0, 1};
+            }
+        }
+        else if (keyPresses[KeyPress::LEFT])
+        {
+            if (!Vector2Equals(snake.direction, Vector2{1, 0}))
+            {
+                snake.direction = {-1, 0};
+            }
+        }
+        else if (keyPresses[KeyPress::RIGHT])
+        {
+            if (!Vector2Equals(snake.direction, Vector2{-1, 0}))
+            {
+                snake.direction = {1, 0};
+            }
+        }    
     }
 }
 

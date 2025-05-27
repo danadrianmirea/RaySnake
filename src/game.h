@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "raylib.h"
 #include "snake.h"
 #include "food.h"
@@ -14,7 +16,8 @@ public:
     void Reset();
 
     void Update(float dt);
-    void HandleInput();
+    void ReadInput();
+    void ProcessInput();
     void UpdateUI();
     void Draw();
     void DrawUI();
@@ -55,7 +58,17 @@ private:
     RenderTexture2D targetRenderTex;
     Font font;
 
+    // keyboard state tracking
+    enum KeyPress {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT
+    };
+    std::vector<bool> keyPresses;
+
     // Touch state tracking
     Vector2 touchStartPos;
+    Vector2 touchMovement;
     const float SWIPE_THRESHOLD = 20.0f; // Minimum distance for a swipe
 };
