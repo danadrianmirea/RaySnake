@@ -27,6 +27,9 @@ Game::Game()
     wallSound = LoadSound("Sounds/wall.mp3");
     Food::InitTexture(); // Initialize the food texture
     Snake::InitTextures(); // Initialize the snake textures
+    music = LoadMusicStream("Sounds/music.mp3");
+    SetMusicVolume(music, 0.2f);
+    PlayMusicStream(music);
     InitGame();
 }
 
@@ -58,6 +61,8 @@ Game::~Game()
     UnloadFont(font);
     Food::UnloadTexture(); // Clean up the food texture
     Snake::UnloadTextures(); // Clean up the snake textures
+    StopMusicStream(music);
+    UnloadMusicStream(music);
     CloseAudioDevice();
 }
 
@@ -68,6 +73,7 @@ void Game::Reset()
 
 void Game::Update(float dt)
 {
+    UpdateMusicStream(music);
     if ((int)snake.body.size() > cellCount * cellCount - 1)
     {
         won = true;

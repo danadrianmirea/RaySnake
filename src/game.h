@@ -44,6 +44,7 @@ private:
     Food food = Food(snake.body);
     Sound eatSound;
     Sound wallSound;
+    Music music; // Background music
 
     int score;
     int highScore;
