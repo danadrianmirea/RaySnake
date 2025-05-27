@@ -407,7 +407,8 @@ void Game::DrawUI()
     Color promptText = WHITE;
 
     if (isMobile) {
-        DrawText("Swipe to control, tap title bar to pause", offset + 50, 0, 30, BLACK);
+        DrawText("Swipe to control, tap title bar to pause", offset + 40, 0, 30, BLACK);
+        DrawText("For best experience play the desktop version", offset + 40, 40, 30, BLACK);
     } else {
 #ifndef EMSCRIPTEN_BUILD
         DrawText("WASD to play, ESC: exit, P: pause", offset + 100, 0, 30, BLACK);
