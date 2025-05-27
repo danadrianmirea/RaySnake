@@ -388,6 +388,9 @@ void Game::DrawUI()
     float fontSize = 30;
     float textOffsetX = 300;
 
+    Color promptBg = {0, 0, 0, 180}; // semi-transparent black
+    Color promptText = WHITE;
+
     if (isMobile) {
         DrawText("Swipe to control, tap title bar to pause", offset + 50, 0, 30, BLACK);
     } else {
@@ -431,46 +434,46 @@ void Game::DrawUI()
 
     if (exitWindowRequested)
     {
-        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
-        DrawText("Are you sure you want to exit? [Y/N]", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, BLACK);
+        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, promptBg);
+        DrawText("Are you sure you want to exit? [Y/N]", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
     }
     else if (firstTimeGameStart)
     {
-        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
+        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, promptBg);
         if (isMobile) {
-            DrawText("Tap to play", (gameScreenWidth - textOffsetX + 100) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, BLACK);
+            DrawText("Tap to play", (gameScreenWidth - textOffsetX + 100) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
         } else {
-            DrawText("Press ENTER to play", (gameScreenWidth - textOffsetX) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, BLACK);
+            DrawText("Press ENTER to play", (gameScreenWidth - textOffsetX) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
         }
     }
     else if (paused)
     {
-        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
+        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, promptBg);
 #ifdef EMSCRIPTEN_BUILD
         if(isMobile)
         {
-            DrawText("Game paused, tap title bar to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, BLACK);
+            DrawText("Game paused, tap title bar to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
         }
         else
         {
-            DrawText("Game paused, press P or ESC to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, BLACK);
+            DrawText("Game paused, press P or ESC to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
         }
 #else
-        DrawText("Game paused, press P to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, BLACK);
+        DrawText("Game paused, press P to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
 #endif
     }
     else if (lostWindowFocus)
     {
-        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
-        DrawText("Game paused, focus window to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, BLACK);
+        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, promptBg);
+        DrawText("Game paused, focus window to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
     }
     else if (gameOver)
     {
-        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, GRAY);
+        DrawRectangleRounded({(float)(gameScreenWidth - width) * 0.5f, (float)(gameScreenHeight - height) * 0.5f, width, height}, 0.76f, 20, promptBg);
         if (isMobile) {
-            DrawText("Game over, tap to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, BLACK);
+            DrawText("Game over, tap to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
         } else {
-            DrawText("Game over, press ENTER to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, BLACK);
+            DrawText("Game over, press ENTER to play again", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, promptText);
         }
     }
 }
