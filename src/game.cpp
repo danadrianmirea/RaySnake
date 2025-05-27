@@ -182,9 +182,12 @@ void Game::UpdateUI()
                 Vector2 touchEndPos = GetMousePosition();
                 Vector2 movement = Vector2Subtract(touchEndPos, touchStartPos);
                 
-                if (Vector2Length(movement) < SWIPE_THRESHOLD)
+                // Check if the tap was in the title bar area
+                if (Vector2Length(movement) < SWIPE_THRESHOLD && 
+                    touchEndPos.x >= 0 && touchEndPos.x <= gameScreenWidth &&
+                    touchEndPos.y >= 0 && touchEndPos.y <= 50)
                 {
-                    // It's a tap, pause the game
+                    // It's a tap in the title bar, pause the game
                     paused = !paused;
                 }
             }
@@ -382,7 +385,7 @@ void Game::DrawUI()
     float textOffsetX = 300;
 
     if (isMobile) {
-        DrawText("Swipe to control, tap to pause", offset + 140, 0, 30, WHITE);
+        DrawText("Swipe to control, tap title bar to pause", offset + 50, 0, 30, WHITE);
     } else {
 #ifndef EMSCRIPTEN_BUILD
         DrawText("WASD to play, ESC: exit, P: pause", offset + 120, 0, 30, WHITE);
@@ -423,7 +426,7 @@ void Game::DrawUI()
 #ifdef EMSCRIPTEN_BUILD
         if(isMobile)
         {
-            DrawText("Game paused, tap to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
+            DrawText("Game paused, tap title bar to continue", (gameScreenWidth - textOffsetX * 2) * 0.5f, (gameScreenHeight - fontSize) * 0.5f, fontSize, WHITE);
         }
         else
         {
