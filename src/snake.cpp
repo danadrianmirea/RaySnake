@@ -107,27 +107,38 @@ void Snake::Draw() {
     float y = body[i].y;
     Vector2 pos = Vector2{offset + x * cellSize, offset + y * cellSize};
 
+    auto drawSegment = [&](Texture2D tex) {
+      DrawTexturePro(
+        tex,
+        Rectangle{0, 0, (float)tex.width, (float)tex.height},
+        Rectangle{pos.x, pos.y, (float)cellSize, (float)cellSize},
+        Vector2{0, 0},
+        0.0f,
+        WHITE
+      );
+    };
+
     if (i == 0) // Head
     {
       if (direction.x == 1)
-        DrawTexture(headRight, pos.x, pos.y, WHITE);
+        drawSegment(headRight);
       else if (direction.x == -1)
-        DrawTexture(headLeft, pos.x, pos.y, WHITE);
+        drawSegment(headLeft);
       else if (direction.y == 1)
-        DrawTexture(headDown, pos.x, pos.y, WHITE);
+        drawSegment(headDown);
       else
-        DrawTexture(headUp, pos.x, pos.y, WHITE);
+        drawSegment(headUp);
     } else if (i == body.size() - 1) // Tail
     {
       Vector2 prevPos = body[i - 1];
       if (prevPos.x < x)
-        DrawTexture(tailRight, pos.x, pos.y, WHITE);
+        drawSegment(tailRight);
       else if (prevPos.x > x)
-        DrawTexture(tailLeft, pos.x, pos.y, WHITE);
+        drawSegment(tailLeft);
       else if (prevPos.y < y)
-        DrawTexture(tailDown, pos.x, pos.y, WHITE);
+        drawSegment(tailDown);
       else
-        DrawTexture(tailUp, pos.x, pos.y, WHITE);
+        drawSegment(tailUp);
     } else // Body
     {
       Vector2 prevPos = body[i - 1];
@@ -138,27 +149,27 @@ void Snake::Draw() {
 
       // Straight segment
       if ((dirToPrev.y == 0 && dirToNext.y == 0))
-        DrawTexture(bodyHorizontal, pos.x, pos.y, WHITE);
+        drawSegment(bodyHorizontal);
       else if ((dirToPrev.x == 0 && dirToNext.x == 0))
-        DrawTexture(bodyVertical, pos.x, pos.y, WHITE);
+        drawSegment(bodyVertical);
       else {
         // Corner segment
         // Up + Right
         if (((dirToPrev.x == 1 && dirToNext.y == -1) ||
              (dirToNext.x == 1 && dirToPrev.y == -1)))
-          DrawTexture(bodyTopRight, pos.x, pos.y, WHITE);
+          drawSegment(bodyTopRight);
         // Up + Left
         else if (((dirToPrev.x == -1 && dirToNext.y == -1) ||
                   (dirToNext.x == -1 && dirToPrev.y == -1)))
-          DrawTexture(bodyTopLeft, pos.x, pos.y, WHITE);
+          drawSegment(bodyTopLeft);
         // Down + Right
         else if (((dirToPrev.x == 1 && dirToNext.y == 1) ||
                   (dirToNext.x == 1 && dirToPrev.y == 1)))
-          DrawTexture(bodyBottomRight, pos.x, pos.y, WHITE);
+          drawSegment(bodyBottomRight);
         // Down + Left
         else if (((dirToPrev.x == -1 && dirToNext.y == 1) ||
                   (dirToNext.x == -1 && dirToPrev.y == 1)))
-          DrawTexture(bodyBottomLeft, pos.x, pos.y, WHITE);
+          drawSegment(bodyBottomLeft);
       }
     }
   }
