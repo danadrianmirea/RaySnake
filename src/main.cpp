@@ -21,6 +21,7 @@ int main()
     InitWindow(gameScreenWidth, gameScreenHeight, "Snake");
 #ifndef EMSCRIPTEN_BUILD
     SetWindowState(FLAG_WINDOW_RESIZABLE);
+    ToggleBorderlessWindowed();
 #endif    
     SetMasterVolume(0.5f);
 
