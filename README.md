@@ -1,4 +1,4 @@
-# RaySnake 🐍
+# Snake
 
 A classic Snake game implementation using Raylib, combining retro gaming charm with modern graphics capabilities.
 
